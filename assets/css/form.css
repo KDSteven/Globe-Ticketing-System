@@ -1,0 +1,464 @@
+/* Base Colors */
+:root {
+  --brand: #2E3192;
+  --bg: #f4f4f6;
+  --card: #ffffff;
+  --ink: #1e1e1e;
+  --border: #d2d2d2;
+}
+/* Reset + Layout */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* Top Brand Bar */
+.brandbar {
+  background: var(--brand);
+  color: #fff;
+  border-bottom: 2px solid #1d1f70;
+}
+.brandbar__inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px;
+}
+.brandbar__logo svg { width: 36px; height: 36px; display: block; }
+.brandbar__title {
+  font-weight: 700;
+  line-height: 1.1;
+  font-size: 20px;
+}
+
+/* Page Container */
+.container { max-width: 920px; margin: 0 auto; padding: 20px; }
+
+/* ===== Notice Section ===== */
+.notice-section {
+  background: var(--card);
+  border-left: 6px solid var(--brand);
+  padding: 16px 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.notice-section .section-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.notice-section .note {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.notice-section .description {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.5;
+}
+.notice-section a {
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+.notice-section a:hover { text-decoration: underline; }
+
+/* ===== Form Card ===== */
+.card {
+  background: var(--card);
+  padding: 24px 28px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Field Layout */
+.field { margin-bottom: 18px; }
+label {
+  display: block;
+  font-weight: 700;
+  color: var(--brand);
+  margin-bottom: 6px;
+}
+
+/* Input & Textarea */
+input[type="text"],
+input[type="email"],
+textarea {
+  width: 100%;
+  font-size: 15px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  resize: vertical;
+  min-height: 40px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+textarea {
+  min-height: 80px;
+  max-height: 180px;
+}
+input:focus,
+textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(46,49,146,0.15);
+  outline: none;
+}
+
+/* Helper Text */
+.hint {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+.btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn.primary {
+  background: var(--brand);
+  color: #fff;
+}
+.btn.primary:hover {
+  background: #1e2375;
+}
+.btn:hover { opacity: 0.95; }
+.btn:focus { outline: 3px solid rgba(46,49,146,0.2); }
+.btn:not(.primary) {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+/* Base Colors */
+:root {
+  --brand: #2E3192;
+  --bg: #f4f4f6;
+  --card: #ffffff;
+  --ink: #1e1e1e;
+  --border: #d2d2d2;
+}
+
+/* Reset + Layout */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* Top Brand Bar */
+.brandbar {
+  background: var(--brand);
+  color: #fff;
+  border-bottom: 2px solid #1d1f70;
+}
+.brandbar__inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px;
+}
+.brandbar__logo svg { width: 36px; height: 36px; display: block; }
+.brandbar__title {
+  font-weight: 700;
+  line-height: 1.1;
+  font-size: 20px;
+}
+
+/* Page Container */
+.container { max-width: 920px; margin: 0 auto; padding: 20px; }
+
+/* ===== Notice Section ===== */
+.notice-section {
+  background: var(--card);
+  border-left: 6px solid var(--brand);
+  padding: 16px 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.notice-section .section-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.notice-section .note {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.notice-section .description {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.5;
+}
+.notice-section a {
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+.notice-section a:hover { text-decoration: underline; }
+
+/* ===== Form Card ===== */
+.card {
+  background: var(--card);
+  padding: 24px 28px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.664);
+}
+
+/* Field Layout */
+.field { margin-bottom: 18px; }
+label {
+  display: block;
+  font-weight: 700;
+  color: var(--brand);
+  margin-bottom: 6px;
+}
+
+/* Input & Textarea */
+input[type="text"],
+input[type="email"],
+textarea {
+  width: 100%;
+  font-size: 15px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  resize: vertical;
+  min-height: 40px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+textarea {
+  min-height: 80px;
+  max-height: 180px;
+}
+input:focus,
+textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(46,49,146,0.15);
+  outline: none;
+}
+
+/* Helper Text */
+.hint {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+.btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn.primary {
+  background: var(--brand);
+  color: #fff;
+}
+.btn.primary:hover {
+  background: #1e2375;
+}
+.btn:hover { opacity: 0.95; }
+.btn:focus { outline: 3px solid rgba(46,49,146,0.2); }
+.btn:not(.primary) {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+
+/* Make hint sit under the control */
+.field .hint{
+  display:block;
+  margin-top:6px;
+  font-size:13px;
+  color:#666;
+}
+
+/* Ensure the select spans full width and matches input style */
+.field .control {
+  width: 100%;
+  max-width: none; /* full width just like other inputs */
+}
+
+.select,
+.field select {
+  display: block;
+  width: 100%;
+  height: 42px;
+  padding: 10px 38px 10px 12px;
+  font-size: 15px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Custom caret icon */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+}
+
+/* Focus state */
+.select:focus,
+.field select:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(46, 49, 146, 0.15);
+  outline: none;
+}
+
+
+/* Label spacing */
+.field label{
+  display:block;
+  font-weight:700;
+  color:var(--brand);
+  margin-bottom:6px;
+}
+
+/* Radio card grid */
+.choice-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap:16px;
+  margin-top:10px;
+}
+
+/* Each selectable card */
+.radio-card{
+  display:block;
+  cursor:pointer;
+  user-select:none;
+}
+.radio-card input{ /* hide the native radio but keep it accessible */
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+.radio-card .card-body{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.05);
+  transition: border-color .2s, box-shadow .2s, transform .06s;
+}
+.radio-card .thumb{
+  width:100%;
+  max-width:320px;
+  height:auto;
+  display:block;
+  border-radius:8px;
+}
+.radio-card .caption{
+  font-weight:600;
+  color:#1c2370;
+}
+
+/* Hover/focus states */
+.radio-card:hover .card-body{
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+.radio-card input:focus + .card-body{
+  outline:3px solid rgba(46,49,146,.2);
+  outline-offset:2px;
+}
+
+/* Selected state */
+.radio-card input:checked + .card-body{
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(46,49,146,.15);
+}
+
+/* “Others” inline text */
+.text-inline{
+  display:block;
+  width:100%;
+  max-width:520px;
+  margin:12px 0 0 0;
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  font-size:15px;
+}
+
+#pdNatureGroup {
+  border: 0;
+}
+
+.radio-card .card-body { min-height: 320px; }  /* tweak to your images/text */
+
+.file-input {
+  display: block;
+  width: 100%;
+  max-width: 1000px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+/* Hover & focus states */
+.file-input:hover,
+.file-input:focus {
+  border-color: #2e3192;
+  box-shadow: 0 0 0 2px rgba(46, 49, 146, 0.15);
+  outline: none;
+}
+
+/* Hint below file input */
+#attachHint {
+  display: block;
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 4px;
+  margin-left: 2px;
+}
+
+/* Optional: style the Choose Files button for consistency */
+input[type="file"]::-webkit-file-upload-button {
+  background-color: #2e3192;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: #1e2175;
+}

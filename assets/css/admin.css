@@ -1,0 +1,123 @@
+:root{
+  --ink:#0d0d26;
+  --blue:#2E3192;
+  --bg:#efefef;
+  --card:#ffffff;
+  --green:#18c465;
+  --red:#e53935;
+  --amber:#f4a000;
+  --gray:#5b5b5b;
+  --row-border:#cfcfd8;
+}
+
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:#e6e6e6;color:var(--ink)}
+.container{max-width:1200px;margin:0 auto;padding:0 16px}
+
+/* Top bar */
+.brandbar{background:var(--blue);color:#fff;padding:12px 0;margin-bottom:18px}
+.brandbar__inner{display:flex;align-items:center;gap:12px}
+.brandbar__logo svg{width:44px;height:44px}
+.brandbar__title{font-size:22px;font-weight:800;line-height:1.1}
+
+/* KPI cards */
+.kpi-grid{
+  display:grid;
+  grid-template-columns: repeat(4,1fr);
+  gap:18px;
+  margin:22px 0;
+}
+.kpi-card{
+  background:var(--card);
+  border-radius:12px;
+  border:2px solid transparent;
+  text-align:center;
+  padding:18px 10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.06);
+}
+.kpi-title{font-weight:600;color:#fff;opacity:.9;margin-bottom:8px}
+.kpi-value{font-size:48px;font-weight:800;color:#fff}
+
+.kpi-green{background:var(--green)}
+.kpi-red{background:var(--red)}
+.kpi-amber{background:var(--amber)}
+.kpi-gray{background:var(--gray)}
+
+/* Legend */
+.legend{
+  display:flex;align-items:center;gap:18px;margin:6px 0 10px 2px;
+  color:#1f1f1f;font-weight:600
+}
+.dot{
+  width:16px;height:16px;border-radius:4px;display:inline-block;margin-right:6px;vertical-align:middle
+}
+.dot-green{background:var(--green)}
+.dot-red{background:var(--red)}
+.dot-gray{background:var(--gray)}
+.dot-amber{background:var(--amber)}
+
+/* Table */
+/* Make the whole page wider */
+.container{
+  /* pick ONE of the two max-widths below */
+  /* max-width: 1600px;           /* Wider fixed width */ 
+  max-width: min(95vw, 1600px);   /* Fluid up to 1600px */
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Ensure the table wrapper uses all available width and can scroll if needed */
+.table-wrap{
+  background:#fff;
+  border-radius:10px;
+  padding:8px 12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+  width:100%;          /* <-- add */
+  overflow-x:auto;     /* <-- add (keeps layout safe on small screens) */
+}
+
+/* The table already has width:100%, keep it */
+table.tickets{width:100%; border-collapse:separate; border-spacing:0;}
+
+.tickets th{
+  background:#f3f4ff;
+  color:#122265;
+  font-weight:800;
+  border-bottom:2px solid var(--row-border);
+  padding:10px;
+  position:sticky; top:0; z-index:1;
+}
+.tickets td{padding:10px;border-bottom:1px solid var(--row-border)}
+.tickets tr:last-child td{border-bottom:none}
+
+.row-completed{background:#18c465}
+.row-overdue{background:#e53935}
+.row-pending{background:#5b5b5b77}
+.row-revisions{background:#f4a000}
+
+.actions .btn{
+  display:inline-block;padding:6px 10px;border-radius:6px;font-size:.85rem;
+  background:var(--blue);color:#fff;text-decoration:none;margin-right:6px
+}
+.actions .btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--blue)}
+.actions .btn:hover{filter:brightness(.95)}
+
+.status-select {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background-color: #fff;
+  transition: all 0.2s ease;
+}
+
+.status-select:hover {
+  border-color: #666;
+}
+
+.status-select:disabled {
+  background-color: #eaeaea;
+  cursor: not-allowed;
+}
+
