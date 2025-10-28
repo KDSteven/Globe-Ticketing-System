@@ -138,6 +138,11 @@ function build_page_link($page, $q) {
 <header class="brandbar">
   <div class="brandbar__inner container">
     <div class="brandbar__logo" aria-hidden="true">
+            <button id="sbToggle" aria-label="Open menu" style="
+  margin-left:auto; margin-right:12px;
+  background:#2E3192;color:#fff;border:0;border-radius:8px;
+  padding:8px 12px;font-weight:700;cursor:pointer;
+">☰ Menu</button>
       <svg viewBox="0 0 64 64" role="img" aria-label="Logo">
         <circle cx="32" cy="32" r="30" fill="#fff"></circle>
         <circle cx="20" cy="24" r="5" fill="#2E3192"></circle>
@@ -149,6 +154,7 @@ function build_page_link($page, $q) {
       <div>Data Agreements and</div>
       <div>Contracts Review Request Form</div>
     </div>
+
         <!-- ✅ Logout button -->
     <form action="/api/logout.php" method="post" style="margin-left:auto;">
       <button type="submit" style="
@@ -163,6 +169,27 @@ function build_page_link($page, $q) {
     </form>
   </div>
 </header>
+
+<aside id="offcanvas" aria-hidden="true">
+  <div class="sb-head">
+    <span>Navigation</span>
+    <button id="sbClose" aria-label="Close menu">✕</button>
+  </div>
+  <nav class="sb-nav">
+    <a href="admin_dashboard.php">Dashboard</a>
+    <a href="admin_dashboard.php?q=">All Tickets</a>
+    <a href="admin_dashboard.php?q=Pending">Pending</a>
+    <a href="admin_dashboard.php?q=For%20Revisions">For Revisions</a>
+    <a href="admin_dashboard.php?q=Completed">Completed</a>
+    <a href="admin_dashboard.php?q=Overdue">Overdue</a>
+    <hr>
+    <a href="/customer_portal.php">Back to Portal</a>
+    <a href="/api/logout.php">Logout</a>
+  </nav>
+</aside>
+
+<div id="sbBackdrop" aria-hidden="true"></div>
+
 
 <main class="container page">
   <section class="kpi-grid">
@@ -285,6 +312,6 @@ function build_page_link($page, $q) {
     </div>
   </section>
 </main>
-
+<script src="/assets/js/sidebar.js"></script>
 </body>
 </html>
