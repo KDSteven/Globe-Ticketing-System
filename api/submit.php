@@ -200,12 +200,20 @@ try {
     $mail->addAddress($lawyerEmail);
 
     // Robust CC parsing (commas/semicolons, strip “< >”)
+    // CC list: comma-separated in $cc_emails
     $ccList = preg_split('/[;,]+/', (string)$cc_emails);
-    $ccList = array_filter(array_map(function ($x) {
-        $x = trim($x);
+    $ccList = array_map('trim', $ccList);
+
+    // ➕ ALWAYS include the requestor
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $ccList[] = $email;
+    }
+
+    // normalize “Name <addr>” → addr, keep only valid, de-dupe
+    $ccList = array_values(array_unique(array_filter(array_map(function ($x) {
         if (preg_match('/<([^>]+)>/', $x, $m)) $x = $m[1];
         return filter_var($x, FILTER_VALIDATE_EMAIL) ? $x : '';
-    }, $ccList));
+    }, $ccList))));
     foreach ($ccList as $one) $mail->addCC($one);
 
     if (!empty($mailCfg['bcc'])) {

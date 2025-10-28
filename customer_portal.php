@@ -1,6 +1,7 @@
 <?php
 // index.php — Requestor Submission Portal
 // Handles flash messages from submit.php
+
 $ok    = isset($_GET['ok']);
 $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
 ?>
@@ -48,7 +49,26 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                 in all contract reviews.
               </p>
           </section>
-          
+          <!-- 2.0 Preview Contract -->
+          <label class="block">Has this contract been reviewed before?</label>
+              <label class="radio">
+                <input type="radio" name="prev_reviewed" value="Yes">
+                <span>Yes</span>
+              </label>
+              <label class="radio">
+                <input type="radio" name="prev_reviewed" value="No" checked>
+                <span>No</span>
+              </label>
+            <div id="prevTicketWrap" class="field" style="display:none;">
+              <label for="prev_ticket_id">If Yes, please enter the previous Ticket ID</label>
+              <div class="control">
+                <input type="text" id="prev_ticket_id" name="prev_ticket_id" class="big-input"
+                      placeholder="e.g., GDA-093024">
+              </div>
+              <button type="button" class="btn" id="loadPrevTicketBtn">Load Previous Details</button>
+              <small class="hint">We’ll fetch the previous request and auto-fill the form. You can still edit any field.</small>
+              <div id="prevTicketStatus" class="hint" style="margin-top:6px;"></div>
+            </div>
         <!-- Full Name -->
         <div class="field">
             <label for="full_name">1.1 Full Name</label>

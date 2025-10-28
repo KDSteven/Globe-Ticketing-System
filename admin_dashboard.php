@@ -149,6 +149,18 @@ function build_page_link($page, $q) {
       <div>Data Agreements and</div>
       <div>Contracts Review Request Form</div>
     </div>
+        <!-- ✅ Logout button -->
+    <form action="/api/logout.php" method="post" style="margin-left:auto;">
+      <button type="submit" style="
+        background:#c62828;
+        color:#fff;
+        border:none;
+        border-radius:8px;
+        padding:8px 14px;
+        cursor:pointer;
+        font-weight:600;
+      ">Logout</button>
+    </form>
   </div>
 </header>
 

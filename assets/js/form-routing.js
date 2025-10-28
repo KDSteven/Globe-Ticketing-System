@@ -169,5 +169,190 @@
     });
   })();
 
+(function(){
+  const prevRadios = document.getElementsByName('prev_reviewed');
+  const prevWrap   = document.getElementById('prevTicketWrap');
+  const btnLoad    = document.getElementById('loadPrevTicketBtn');
+  const inputId    = document.getElementById('prev_ticket_id');
+  const statusEl   = document.getElementById('prevTicketStatus');
+
+  // Targets to fill
+  const $ = (id) => document.getElementById(id);
+  const setVal = (id, v) => { const el = $(id); if (el) el.value = v ?? ''; };
+
+  const radioSet = (name, value) => {
+    const list = document.querySelectorAll(`input[name="${name}"]`);
+    let matched = false;
+    list.forEach(r => {
+      if (r.value === value) { r.checked = true; matched = true; }
+      else if (!matched && value && value.toUpperCase() === 'OTHER' && r.value.toUpperCase() === 'OTHER') {
+        r.checked = true; matched = true;
+      }
+    });
+    return matched;
+  };
+
+  const showIf = (el, cond) => { if (el) el.style.display = cond ? '' : 'none'; };
+
+  // Toggle Ticket field visibility
+  function onPrevReviewedChange() {
+    const val = Array.from(prevRadios).find(r => r.checked)?.value || 'No';
+    showIf(prevWrap, val === 'Yes');
+    statusEl.textContent = '';
+  }
+  prevRadios.forEach(r => r.addEventListener('change', onPrevReviewedChange));
+  onPrevReviewedChange();
+
+  // Helper: when "Other" radio is selected, show the text field
+  function handleOtherToggles(data){
+    // Contract type
+    const isOtherContract = (data.contract_type || '').toUpperCase() === 'OTHER';
+    const contractOtherInput = document.getElementById('contract_other');
+    const contractOtherRadio = document.getElementById('contract_other_radio');
+    if (contractOtherRadio) contractOtherRadio.checked = isOtherContract;
+    if (contractOtherInput) {
+      contractOtherInput.style.display = isOtherContract ? '' : 'none';
+      contractOtherInput.value = isOtherContract ? (data.contract_other || '') : '';
+    }
+
+    // PD Nature
+    const isOtherPd = (data.pd_nature || '').toUpperCase() === 'OTHER';
+    const pdOtherRadio = document.getElementById('pd_other_radio');
+    const pdOtherText  = document.getElementById('pd_other_text');
+    if (pdOtherRadio) pdOtherRadio.checked = isOtherPd;
+    if (pdOtherText) {
+      pdOtherText.style.display = isOtherPd ? '' : 'none';
+      pdOtherText.value = isOtherPd ? (data.pd_other_text || '') : '';
+    }
+  }
+
+  // Helper: select dropdown by value (safe)
+  function setSelectValue(id, value){
+    const sel = $(id);
+    if (!sel || value == null) return;
+    const opts = Array.from(sel.options).map(o => o.value);
+    if (opts.includes(value)) sel.value = value;
+  }
+
+  // If B2B group, show tribe block
+  function syncTribeVisibility(groupVal){
+    const tribeBlock = document.querySelector('#tribe-block');
+    if (tribeBlock) {
+      tribeBlock.style.display = (groupVal && groupVal.startsWith('B2B')) ? '' : 'none';
+    }
+  }
+
+  // Fetch and fill
+  btnLoad?.addEventListener('click', async () => {
+    const tid = (inputId?.value || '').trim();
+    statusEl.textContent = '';
+    if (!tid) {
+      statusEl.textContent = 'Please enter a Ticket ID.';
+      return;
+    }
+    try {
+      statusEl.textContent = 'Loading previous ticket…';
+      const res = await fetch(`api/fetch_ticket_public.php?ticket_id=${encodeURIComponent(tid)}`, {
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const payload = await res.json();
+
+      if (!payload || !payload.success) {
+        statusEl.textContent = payload?.message || 'Ticket not found or you do not have access.';
+        return;
+      }
+
+      const d = payload.data || {};
+
+      // Text inputs
+      setVal('full_name', d.full_name);
+      setVal('email', d.email);
+
+      // Group + Tribe
+      setSelectValue('group', d.group);
+      syncTribeVisibility(d.group);
+      setSelectValue('tribe', d.tribe);
+
+      // Assigned lawyer & CC (display + hidden)
+      setVal('lawyer_display', d.assigned_lawyer);
+      setVal('cc_display', d.cc_emails);
+      setVal('lawyer', d.assigned_lawyer);
+      setVal('cc_emails', d.cc_emails);
+
+      // Contract basics
+      setVal('summary', d.summary);
+      radioSet('contract_type', d.contract_type);
+      handleOtherToggles(d);
+      setVal('contract_other', d.contract_other);
+
+      // Parties
+      setVal('customer', d.customer);
+      setVal('vendor', d.vendor);
+
+      // Personal Data nature
+      radioSet('pd_nature', d.pd_nature);
+      setVal('pd_other_text', d.pd_other_text);
+
+      // Part 3
+      setVal('clauses', d.clauses);
+      setVal('doc_link', d.doc_link);
+
+      statusEl.textContent = 'Previous ticket loaded. Review pre-filled details before submitting.';
+    } catch (e) {
+      console.error(e);
+      statusEl.textContent = 'Error loading ticket. Please try again or contact support.';
+    }
+  });
+
+  // OPTIONAL: live “Other” toggles if user changes them manually
+  document.getElementById('contractTypeGroup')?.addEventListener('change', (e) => {
+    const isOther = (e.target?.value || '').toUpperCase() === 'OTHER';
+    const inp = document.getElementById('contract_other');
+    if (inp) inp.style.display = isOther ? '' : 'none';
+  });
+  document.getElementById('pdNatureGroup')?.addEventListener('change', (e) => {
+    const isOther = (e.target?.value || '').toUpperCase() === 'OTHER';
+    const inp = document.getElementById('pd_other_text');
+    if (inp) inp.style.display = isOther ? '' : 'none';
+  });
+})();
+
+btnLoad?.addEventListener('click', async () => {
+  const tid = (inputId?.value || '').trim();
+  statusEl.textContent = '';
+  if (!tid) {
+    statusEl.textContent = 'Please enter a Ticket ID.';
+    return;
+  }
+  try {
+    statusEl.textContent = 'Loading previous ticket…';
+    const res = await fetch('api/fetch_ticket_public.php?ticket_id=' + encodeURIComponent(tid), {
+      credentials: 'same-origin',
+      headers: { 'Accept': 'application/json' }
+    });
+
+    const raw = await res.text(); // read raw first for better error messages
+    let payload = null;
+    try { payload = JSON.parse(raw); } catch (e) { /* not JSON */ }
+
+    if (!res.ok) {
+      statusEl.textContent = `Server error (${res.status}). ${raw?.slice(0,200) || ''}`;
+      return;
+    }
+    if (!payload || !payload.success) {
+      statusEl.textContent = (payload && payload.message) ? payload.message : 'Ticket not found or endpoint error.';
+      return;
+    }
+
+    const d = payload.data || {};
+    // ... (keep your existing prefill code here)
+    statusEl.textContent = 'Previous ticket loaded. Review pre-filled details before submitting.';
+  } catch (e) {
+    console.error(e);
+    statusEl.textContent = 'Network error loading ticket. Check Apache/PHP error log.';
+  }
+});
 
 
