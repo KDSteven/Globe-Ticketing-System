@@ -6,157 +6,149 @@ $error = $_GET['error'] ?? '';
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/login.css">
+  <link rel="stylesheet" href="/assets/css/toast.css">
   <title>Lawyer Login</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-/* Base reset + theming */
-:root{
-  --brand:#2E3192;
-  --bg:#eef2f7;
-  --card:#ffffff;
-  --text:#0f172a;
-  --muted:#64748b;
-  --border:#cbd5e1;
-  --border-strong:#94a3b8;
-  --danger:#b91c1c;
-  --success:#059669;
-  --radius:12px;
-  --shadow:0 6px 18px rgba(2,6,23,.10);
-}
-
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  line-height:1.4;
-}
-
-/* Layout */
-.wrap{
-  max-width: 440px;
-  margin: clamp(48px, 12vh, 120px) auto;
-  padding: 0 16px;
-}
-.card{
-  background:var(--card);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  padding: 24px 22px;
-}
-
-/* Heading */
-h1{
-  margin: 0 0 12px 0;
-  color: var(--brand);
-  font-size: clamp(22px, 2.2vw, 28px);
-  letter-spacing:.2px;
-}
-
-/* Fields */
-.field{ margin: 12px 0 14px; }
-label{
-  display:block;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: var(--text);
-}
-
-/* Inputs */
-input[type="email"],
-input[type="password"],
-input[type="text"]{
-  width:100%;
-  padding:12px 12px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:#fff;
-  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
-  font-size: 15px;
-}
-
-/* States */
-input::placeholder{ color:#94a3b8; }
-input:focus{
-  outline: none;
-  border-color: var(--brand);
-  box-shadow: 0 0 0 3px rgba(46,49,146,.15);
-}
-input:focus-visible{ outline: none; }
-
-/* Autofill (Chrome) */
-input:-webkit-autofill{
-  -webkit-box-shadow: 0 0 0 1000px #fff inset, 0 0 0 3px rgba(46,49,146,.15);
-  -webkit-text-fill-color: var(--text);
-}
-
-/* Button */
-.btn{
-  width:100%;
-  margin-top: 12px;
-  background: var(--brand);
-  color:#fff;
-  border:0;
-  border-radius:10px;
-  padding: 12px 14px;
-  font-weight: 700;
-  cursor:pointer;
-  transition: transform .04s ease, background .15s ease, box-shadow .15s ease, opacity .15s ease;
-  box-shadow: 0 2px 0 rgba(2,6,23,.10);
-}
-.btn:hover{ background:#25297e; }
-.btn:active{ transform: translateY(1px); }
-.btn:disabled,
-.btn[aria-busy="true"]{
-  opacity:.65;
-  cursor:not-allowed;
-}
-
-/* Helper text + links */
-.meta{ margin-top:12px; font-size:14px; color:var(--muted); }
-a{ color:var(--brand); text-decoration:none; }
-a:hover{ text-decoration:underline; }
-
-/* Alerts / errors */
-.err{ color:var(--danger); margin: 8px 0 0; font-weight:600; }
-.alert{
-  padding:10px 12px;
-  border-radius:10px;
-  margin: 0 0 12px;
-  font-size:14px;
-  border:1px solid;
-}
-.alert.error{ border-color:#fecaca; background:#fee2e2; color:#7f1d1d; }
-.alert.success{ border-color:#bbf7d0; background:#dcfce7; color:#064e3b; }
-
-/* Small screens: tighten spacing a bit */
-@media (max-width:420px){
-  .card{ padding:20px 16px; }
-  .btn{ padding:11px 12px; }
-}
-
-  </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Lawyer Login</h1>
-      <?php if ($error): ?><div class="err"><?= htmlspecialchars($error) ?></div><?php endif; ?>
-      <form method="post" action="api/login.php">
-        <div class="field">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required>
+  
+<div id="toast-root" aria-live="polite" aria-atomic="true"></div>
+
+<main class="auth">
+  <!-- LEFT PANEL -->
+<!-- LEFT PANEL -->
+<section class="auth__panel">
+  <div class="panel__inner">
+
+    <!-- BRAND + SUBTITLE (shared) -->
+    <h1 class="brand">
+      <span class="brand-accent">AI & Privacy</span> Lawyers
+    </h1>
+    <p class="subtitle" id="panelSubtitle">Sign in to start your session.</p>
+
+
+
+    <!-- ============= VIEW A: LOGIN ============= -->
+  <div class="panel-switch" id="panelSwitch">
+    <div id="view-login" class="view is-active">
+      <form method="post" action="api/login.php" class="form" id="loginForm">
+        <div class="field has-icon">
+          <label for="email">Email Address</label>
+          <i class="fa-solid fa-envelope input-icon" aria-hidden="true"></i>
+          <input type="email" id="email" name="email" placeholder="Enter Your Globe Email"
+                 autocomplete="username" required>
         </div>
-        <div class="field">
+
+        <div class="field has-icon" style="position:relative;">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" required>
+          <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+          <input type="password" id="password" name="password" placeholder="Your password"
+                 autocomplete="current-password" required>
+          <button type="button" class="pw-toggle" data-toggle="#password" aria-label="Show password">
+            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+          </button>
         </div>
+
+        <div class="row-between">
+          <button type="button" class="link-muted" id="gotoForgot">Forgot password?</button>
+        </div>
+
         <button class="btn" type="submit">Sign in</button>
       </form>
+
+      <p class="tos">
+        By using this service, you understand and agree to the Globe Online Services
+        <a href="#" class="link-muted">Terms of Use</a> and <a href="#" class="link-muted">Privacy Statement</a>.
+      </p>
       <div class="meta"><a href="index.php">← Back to Portal</a></div>
+      <footer class="site-footer">
+        <p>© 2025 Globe • AI and Privacy Governance • All Rights Reserved</p>
+      </footer>
+    </div>
+
+    <!-- ============= VIEW B: RESET (OTP) ============= -->
+    <div id="view-reset" class="view is-hidden">
+      <!-- STEP 1: Enter email, send OTP -->
+      <form class="form" id="stepEmailForm" autocomplete="off">
+        <div class="field has-icon">
+          <label for="fp_email">Email Address</label>
+          <i class="fa-solid fa-envelope input-icon" aria-hidden="true"></i>
+          <input type="email" id="fp_email" name="email" placeholder="Enter your Globe Email" required>
+        </div>
+
+        <button class="btn" type="submit" id="sendOtpBtn">
+          <span class="btn-text">Send OTP</span>
+          <span class="btn-spinner" hidden><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+        </button>
+
+        <p class="hint" id="emailStepHint">We’ll email a 6-digit code that expires in 10 minutes.</p>
+      </form>
+
+      <!-- STEP 2: Verify OTP + (then) New password -->
+      <form class="form" id="stepResetForm" hidden autocomplete="off">
+        <div class="field has-icon">
+          <label for="otp">One-Time Passcode (OTP)</label>
+          <i class="fa-solid fa-key input-icon" aria-hidden="true"></i>
+          <input type="text" id="otp" name="otp" inputmode="numeric" pattern="\d{6}" maxlength="6"
+                placeholder="6-digit code" required>
+          <div class="hint">
+            <span id="otpCountdown">10:00</span> •
+            <button type="button" class="link-muted" id="resendOtpBtn" disabled>Resend OTP</button>
+          </div>
+        </div>
+
+        <!-- Password block appears only after OTP is verified -->
+        <div id="pwBlock" hidden aria-hidden="true">
+          <div class="field has-icon" style="position:relative;">
+            <label for="new_password">New Password</label>
+            <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+            <input type="password" id="new_password" name="new_password"
+                  placeholder="At least 8 chars, with letters & numbers">
+            <button type="button" class="pw-toggle" data-toggle="#new_password" aria-label="Show password">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+            <small class="hint">Use at least 8 characters with a mix of letters and numbers.</small>
+          </div>
+
+          <div class="field has-icon" style="position:relative;">
+            <label for="confirm_password">Confirm Password</label>
+            <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-type password">
+            <button type="button" class="pw-toggle" data-toggle="#confirm_password" aria-label="Show password">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+
+          <button class="btn" type="submit" id="resetBtn">
+            <span class="btn-text">Reset Password</span>
+            <span class="btn-spinner" hidden><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+          </button>
+        </div>
+
+        <!-- carry email from step 1 -->
+        <input type="hidden" id="reset_email" name="email">
+      </form>
+
+      <div class="meta"><button type="button" class="link-muted" id="backToLogin">← Back to Sign in</button></div>
+      <footer class="site-footer">
+        <p>© 2025 Globe • AI and Privacy Governance • All Rights Reserved</p>
+      </footer>
     </div>
   </div>
+</div>
+</section>
+
+  <!-- RIGHT HERO -->
+  <section class="auth__hero" aria-hidden="true">
+    <img src="/img/Globetower.jpg" alt="">
+  </section>
+</main>
+<script src="/assets/js/login.js" defer></script>
+<script src="/assets/js/toast.js"></script>
+<script src="/assets/js/showToast.js"></script>
+
+
 </body>
 </html>

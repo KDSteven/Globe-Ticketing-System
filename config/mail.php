@@ -8,7 +8,7 @@ return [
 
   // SMTP user (use an app password if Gmail)
   'username'   => 'ksd.perez13@gmail.com',
-  'password'   => 'ylcjlzqknvktnert',
+  'password'   => 'hecayxhyygumulyd',
 
   // FROM identity
   'from_email' => 'ksd.perez13@gmail.com',

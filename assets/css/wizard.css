@@ -1,0 +1,75 @@
+/* Progress bar */
+.wizard-progress {
+  margin: 12px 0 18px;
+}
+.wizard-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.wizard-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
+  font-weight: 500;
+}
+.wizard-step .step-index {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  font-size: 14px;
+}
+.wizard-step.is-active {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+.wizard-step.is-active .step-index {
+  background: #2563eb;
+  color: #fff;
+}
+.wizard-step.is-complete {
+  border-color: #16a34a;
+  background: #ecfdf5;
+}
+.wizard-step.is-complete .step-index {
+  background: #16a34a;
+  color: #fff;
+}
+
+/* Panes */
+.wizard-form {
+  padding: 16px;
+}
+.wizard-pane[hidden] {
+  display: none !important;
+}
+
+/* Actions */
+.wizard-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 12px 4px 4px;
+  border-top: 1px solid #eee;
+  margin-top: 12px;
+}
+.btn.ghost {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+}
+
+.container.page {
+  max-width: 1200px;          /* adjust: 800–1200 depending on preference */
+  padding: 0 24px 24px;           /* keeps some breathing room from edges */
+}

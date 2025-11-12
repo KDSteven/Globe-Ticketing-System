@@ -1,0 +1,379 @@
+/* =========================================================
+   Login Page — Reconstructed Styles
+   - Equal-height split layout (left form + right hero)
+   - Predictable header/footer math (no scroll)
+   - Professional spacing, inputs with icons, FA eye toggle
+   ========================================================= */
+
+/* ------------------- Design Tokens ------------------- */
+:root{
+  /* Brand */
+  --brand:          #2E3192;
+  --brand-700:      #25297e;
+
+  /* Surface & text */
+  --bg:             #eef2f7;
+  --surface:        #ffffff;
+  --text:           #0f172a;
+  --muted:          #64748b;
+
+  /* Borders & shadows */
+  --border:         #e2e8f0;
+  --shadow-sm:      0 1px 2px rgba(2,6,23,.06);
+  --shadow-md:      0 8px 28px rgba(2,6,23,.08);
+
+  /* Alerts */
+  --danger:         #b91c1c;
+  --success:        #059669;
+
+  /* Radii */
+  --r-sm:           10px;
+  --r-md:           14px;
+  --r-lg:           36px;
+
+  /* Layout heights */
+  --topbar-h:       56px;   /* keep header consistent */
+  --footer-h:       0px;    /* set to 64px if you add a page footer */
+}
+
+/* ------------------- Reset / Base ------------------- */
+*{ box-sizing: border-box }
+html, body{ height: 100% }
+
+body{
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.45;
+}
+
+/* Links */
+a{ color: var(--brand); text-decoration: none; }
+a:hover{ text-decoration: underline; }
+
+
+/* ------------------- Split Auth Layout ------------------- */
+.auth{
+  /* Fill viewport minus header/footer exactly */
+  flex: 1 0 auto;
+  min-height: calc(100dvh - var(--topbar-h) - var(--footer-h));
+
+  display: grid;
+  grid-template-columns: 520px 1fr;  /* left width / right flex */
+  align-items: stretch;              /* equal height */
+}
+
+/* Left Panel */
+.auth__panel{
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+  border-top-right-radius: var(--r-lg);
+  border-bottom-right-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm), var(--shadow-md);
+}
+
+.panel__inner{
+  width: 100%;
+  max-width: 420px;
+}
+
+/* Brand / Heading */
+.brand{
+  margin: 0 0 6px;
+  font-size: clamp(22px, 2.2vw, 28px);
+  font-weight: 900;
+  letter-spacing: .2px;
+  color: var(--text);
+}
+.brand-accent{ color: var(--brand); }
+
+.subtitle{
+  margin: 0 0 14px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* Fields */
+.field{ margin: 12px 0 14px; }
+label{
+  display:block;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+/* Inputs (with icon space) */
+.has-icon{ position: relative; }
+
+.input-icon{
+  position:absolute;
+  left:12px; top:36px;
+  font-size:14px;
+  color:#8a98ab;
+  pointer-events:none;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"]{
+  width: 100%;
+  height: 40px;
+  padding: 10px 12px 10px 36px;
+  font-size: 15px;
+
+  background: #f1f5f9;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+input::placeholder{ color:#94a3b8; }
+
+input:focus{
+  outline: none;
+  background: #fff;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(46,49,146,.12);
+}
+
+/* Chrome autofill */
+input:-webkit-autofill{
+  -webkit-box-shadow: 0 0 0 1000px #fff inset, 0 0 0 3px rgba(46,49,146,.12);
+  -webkit-text-fill-color: var(--text);
+}
+
+/* Eye toggle */
+.pw-toggle{
+  position:absolute;
+  right:10px; top:32px;
+  background:transparent;
+  border:0;
+  padding:6px;
+  border-radius:8px;
+  cursor:pointer;
+  color:#8a98ab;
+}
+.pw-toggle:hover{ color: var(--brand); }
+
+/* Forgot / row helper */
+.row-between{
+  display:flex;
+  justify-content:flex-end;
+  margin: 2px 0 12px;
+}
+.link-muted{ color:#7a8799; }
+.link-muted:hover{ color: var(--brand); }
+
+/* Submit button */
+.btn{
+  width:100%;
+  height:44px;
+  background: var(--brand);
+  color:#fff;
+  border:0;
+  border-radius: var(--r-sm);
+  font-weight: 800;
+  letter-spacing:.2px;
+  cursor:pointer;
+  transition: transform .04s ease, background .15s ease, box-shadow .15s ease, opacity .15s ease;
+  box-shadow: 0 4px 14px rgba(46,49,146,.18);
+}
+.btn:hover{ background: var(--brand-700); transform: translateY(-1px); }
+.btn:active{ transform: translateY(0); }
+.btn:disabled{ opacity:.65; cursor:not-allowed; }
+
+/* TOS / helper text */
+.tos{
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: #7a8799;
+  line-height: 1.4;
+}
+.meta{ margin-top:12px; font-size:14px; color:var(--muted); }
+
+/* Alerts */
+.alert{
+  display:flex; gap:8px; align-items:flex-start;
+  padding:10px 12px;
+  border-radius: var(--r-sm);
+  margin: 0 0 12px;
+  font-size:14px;
+  border:1px solid;
+}
+.alert.error{ border-color:#fecaca; background:#fff1f2; color:#7f1d1d; }
+.alert.success{ border-color:#bbf7d0; background:#ecfdf5; color:#065f46; }
+
+/* Right Hero */
+.auth__hero{
+  position: relative;
+  overflow: hidden;
+
+  /* If you have a photo, swap the background below */
+  background:
+    radial-gradient(1200px 600px at 60% -10%, rgba(46,49,146,.25), transparent 60%),
+    radial-gradient(800px 400px  at 100% 50%, rgba(180,0,0,.20), transparent 60%),
+    #0f1b2d; /* deep navy fallback */
+
+  background-size: cover;
+  background-position: center;
+}
+
+.auth__hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: rgba(46, 49, 146, 0.466); /* <-- brand blue at ~28% opacity */
+  pointer-events:none; /* overlay does not affect clicks */
+}
+
+
+/* Optional watermark logo on the hero */
+.auth__hero::after{
+  content:"";
+  position:absolute;
+  top:50%; right:30%;
+  width:min(36vw, 380px);
+  height:min(36vw, 380px);
+  transform: translateY(-50%);
+  background: url('/img/Globe.png') no-repeat center/contain;
+  opacity:100;
+  filter: drop-shadow(0 10px 20px rgb(0, 0, 0));
+}
+
+/* ------------------- Optional Global Footer ------------------- */
+.site-footer{
+  height: var(--footer-h);              /* set --footer-h to 64px to enable */
+  display:flex; align-items:center; justify-content:center;
+  text-align:center;
+  padding: 20px 16px;
+  font-size:13px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  flex: 0 0 auto;
+}
+
+/* ------------------- Legacy / Unused Bits (kept for safety) ------------------- */
+.wrap{ display:none }  /* old single-card layout hidden */
+.card{ display:none }  /* old single-card layout hidden */
+h1{ color: var(--brand); } /* keep default color for any stray h1 */
+
+/* ------------------- Responsive ------------------- */
+@media (max-width: 1100px){
+  .auth{ grid-template-columns: 500px 1fr; }
+}
+@media (max-width: 960px){
+  .auth{ grid-template-columns: 1fr; }
+  .auth__hero{ display:none; }
+  .auth__panel{
+    border-radius: 0;
+    min-height: calc(100dvh - var(--topbar-h) - var(--footer-h));
+    box-shadow: none;
+  }
+}
+@media (max-width: 420px){
+  .panel__inner{ max-width: 100%; }
+  .brand{ font-size: 22px; }
+  .topbar__title{ font-size: 16px; }
+}
+
+/* === Make left & right exactly equal width === */
+.auth{
+  /* keep the no-scroll math you already have */
+  min-height: calc(100dvh - var(--topbar-h) - var(--footer-h));
+  display: grid;
+  grid-template-columns: 1fr 1fr;   /* <-- equal halves */
+  align-items: stretch;
+   height: calc(100dvh - var(--topbar-h) - var(--footer-h));
+}
+
+/* Left panel styling stays, but ensure no gap/line shows through */
+.auth__panel{
+  border-top-right-radius: var(--r-lg);
+  border-bottom-right-radius: var(--r-lg);
+  overflow: hidden;                 /* hide any tiny seam under the curve */
+  box-shadow: var(--shadow-sm), var(--shadow-md);
+  padding: 32px;                    /* a bit more breathing room at 50% width */
+}
+
+/* Keep the form content from getting too wide even if the panel is half-screen */
+.panel__inner{
+  max-width: 520px;                 /* optional: widen from 420 to 520 since panel is larger */
+  width: 100%;
+  margin-inline: auto;
+}
+
+/* Hero stays equal height automatically; just ensure background covers */
+.auth__hero{
+  background-image: url('/img/office-hero.jpg'); /* your image */
+  background-size: cover;         /* ensures the image fills the area */
+  background-position: center;    /* centers the focal point */
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;                   /* match grid height */
+  overflow: hidden;
+}
+
+/* If you want 60/40 on smaller laptops but 50/50 on desktops, use this: */
+@media (max-width: 1200px){
+  .auth{ grid-template-columns: 520px 1fr; }   /* 60/40 below 1200px */
+}
+
+/* inline spinner in buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-spinner { line-height: 0; }
+
+/* link-like buttons used for toggle */
+.link-muted {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: #6b7280;
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+}
+/* Container for swapping views */
+.panel-switch {
+  position: relative;
+  transition: height .28s ease;
+}
+
+/* Base state for each view (stacked) */
+.view {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity .28s ease, transform .28s ease;
+  will-change: opacity, transform;
+}
+
+/* Visible/interactive view */
+.view.is-active {
+  position: relative;      /* takes natural height */
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Hidden view kept stacked */
+.view.is-hidden {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
+.btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-spinner { line-height: 0; }

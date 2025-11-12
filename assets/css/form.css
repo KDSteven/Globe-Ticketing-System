@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 /* Base Colors */
 :root {
   --brand: #2E3192;
@@ -7,14 +8,24 @@
   --border: #d2d2d2;
 }
 /* Reset + Layout */
-* { box-sizing: border-box; }
 html, body {
   margin: 0;
   height: 100%;
-  font-family: "Segoe UI", Tahoma, sans-serif;
+  font-family: "Inter", sans-serif;
   background: var(--bg);
   color: var(--ink);
 }
+*,
+input,
+select,
+textarea,
+button,
+label,
+.section-title,
+.brandbar__title {
+  font-family: "Inter", sans-serif !important;
+}
+
 
 /* Top Brand Bar */
 .brandbar {
@@ -36,7 +47,10 @@ html, body {
 }
 
 /* Page Container */
-.container { max-width: 920px; margin: 0 auto; padding: 20px; }
+.container { 
+  max-width: 920px; 
+  margin: 0 auto; 
+  padding: 20px; }
 
 /* ===== Notice Section ===== */
 .notice-section {
@@ -66,23 +80,6 @@ html, body {
   text-decoration: none;
 }
 .notice-section a:hover { text-decoration: underline; }
-
-/* ===== Form Card ===== */
-.card {
-  background: var(--card);
-  padding: 24px 28px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-/* Field Layout */
-.field { margin-bottom: 18px; }
-label {
-  display: block;
-  font-weight: 700;
-  color: var(--brand);
-  margin-bottom: 6px;
-}
 
 /* Input & Textarea */
 input[type="text"],
@@ -461,4 +458,36 @@ input[type="file"]::-webkit-file-upload-button {
 
 input[type="file"]::-webkit-file-upload-button:hover {
   background-color: #1e2175;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-grid-2 .field {
+  margin-bottom: 16px;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.radio-group input[type="radio"] {
+  margin-right: 8px;
+  transform: scale(1.1);
 }
