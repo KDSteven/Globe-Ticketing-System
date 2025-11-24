@@ -14,6 +14,7 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
   <link rel="stylesheet" href="assets/css/admin.css">
   <link rel="stylesheet" href="assets/css/form.css">
   <link rel="stylesheet" href="assets/css/wizard.css">
+  <link rel="stylesheet" href="/assets/css/toast.css">
 </head>
 <body>
 
@@ -27,11 +28,17 @@ include __DIR__ . '/assets/partials/brandbar.php';
 
 
   <main class="container page">
-  <?php if ($ok): ?>
-    <div class="alert success" role="alert">Your request was submitted. We’ll review it shortly.</div>
-  <?php elseif ($error): ?>
-    <div class="alert danger" role="alert"><?= htmlspecialchars($error) ?></div>
-  <?php endif; ?>
+<?php if ($ok || $error): ?>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      <?php if ($ok): ?>
+        toast.success('Request Submitted!', 'Your request was submitted successfully and will be reviewed shortly.');
+      <?php elseif ($error): ?>
+        toast.error('Submission Failed', <?= json_encode($error) ?>);
+      <?php endif; ?>
+    });
+  </script>
+<?php endif; ?>
 
   <!-- Progress bar -->
   <nav class="wizard-progress" aria-label="Form progress">
@@ -337,6 +344,6 @@ include __DIR__ . '/assets/partials/brandbar.php';
 
   <script src="/assets/js/form-routing.js"></script>
   <script src="/assets/js/wizard.js"></script>
-
+  
 </body>
 </html>

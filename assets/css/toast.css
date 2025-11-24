@@ -90,7 +90,7 @@
 }
 
 /* Variants (sets colors for accent, icon, title) */
-.toast.-success { --accent:#18c465; --tone:#118a48; --tint: rgba(24,196,101,.12); }
+.toast.-success { --accent:#056e35; --tone:#056e35; --tint: rgba(24,196,101,.12); }
 .toast.-error   { --accent:#e53935; --tone:#b71c1c; --tint: rgba(229,57,53,.12); }
 .toast.-info    { --accent:#2E3192; --tone:#2E3192; --tint: rgba(46,49,146,.12); }
 .toast.-warning { --accent:#f4a000; --tone:#8a5a00; --tint: rgba(244,160,0,.14); }
@@ -131,3 +131,4 @@
   .toast-container{ right: 12px; left: 12px; }
   .toast{ width: 100%; }
 }
+

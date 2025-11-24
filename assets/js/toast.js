@@ -70,3 +70,4 @@
     warning: (title, msg, opts) => makeToast('warning', title, msg, opts),
   };
 })();
+

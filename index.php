@@ -1,3 +1,7 @@
+<?php
+$ok    = isset($_GET['ok']) ? (bool) $_GET['ok'] : false;
+$error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,6 +9,8 @@
   <title>Data Agreements & Contracts — Request Portal</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light" />
+  <link rel="stylesheet" href="/assets/css/toast.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
     /* ---------- Design Tokens ---------- */
@@ -224,6 +230,21 @@
   </style>
 </head>
 <body>
+  
+  <?php if ($ok): ?>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      toast.success('Request Submitted!', 'Your request was submitted successfully and will be reviewed shortly.');
+    });
+    </script>
+    <?php elseif ($error): ?>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      toast.error('Submission failed', <?= json_encode($error) ?>);
+    });
+    </script>
+  <?php endif; ?>
+
   <div class="page">
     <!-- Hero -->
     <header class="hero" role="banner" aria-label="Portal header">
@@ -265,5 +286,6 @@
       © 2025 Globe • AI and Privacy Governance • All Rights Reserved
     </footer>
   </div>
+  <script src="/assets/js/toast.js"></script>
 </body>
 </html>
