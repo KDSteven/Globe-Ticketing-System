@@ -9,7 +9,8 @@ $error = $_GET['error'] ?? '';
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/assets/css/login.css">
   <link rel="stylesheet" href="/assets/css/toast.css">
-  <title>Lawyer Login</title>
+  <link rel="icon" type="image/x-icon" href="/assets/img/favicon/favicon.ico">
+  <title>Login Page</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
 <body>

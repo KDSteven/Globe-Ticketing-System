@@ -15,6 +15,7 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
   <link rel="stylesheet" href="assets/css/form.css">
   <link rel="stylesheet" href="assets/css/wizard.css">
   <link rel="stylesheet" href="/assets/css/toast.css">
+  <link rel="icon" type="image/x-icon" href="/assets/img/favicon/favicon.ico">
 </head>
 <body>
 

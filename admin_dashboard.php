@@ -191,6 +191,8 @@ while ($row = $vres->fetch_assoc()) {
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" href="assets/css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="/assets/img/favicon/favicon.ico">
+    
 </head>
 
 <body>
@@ -202,6 +204,25 @@ $brand = [
 ];
 include __DIR__ . '/assets/partials/brandbar.php';
 ?>
+<?php
+// Fetch the lawyer's name from the database using the session ID
+$userName = '';
+if (!empty($_SESSION['lawyer_id'])) {
+    $stmt = $conn->prepare("SELECT name FROM lawyers WHERE id = ?");
+    $stmt->bind_param("i", $_SESSION['lawyer_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        $userName = $row['name'];
+    }
+    $stmt->close();
+}
+?>
+
+<div class="welcome-message">
+    <p>Hello! Welcome Back, <strong><?= h($userName) ?>!</strong></p>
+</div>
+
 <div class="date-filter-bar">
     <form method="GET" id="filterForm">
 
@@ -286,9 +307,24 @@ include __DIR__ . '/assets/partials/brandbar.php';
 <div class="chart-grid">
     <div class="chart-card">
         <h3>Reviewer Workload</h3>
-        <div class="chart-container">
-            <canvas id="reviewerWorkloadChart"></canvas>
-        </div>
+        <ul class="reviewer-list">
+            <?php
+            $maxCount = max($ticketCount) ?: 1;  // Avoid division by zero
+            foreach ($reviewers as $index => $reviewer) {
+                $count = $ticketCount[$index];
+                $percentage = ($count / $maxCount) * 100;
+                echo "<li class='reviewer-item'>
+                        <div class='reviewer-info'>
+                            <span class='reviewer-name'>" . h($reviewer) . "</span>
+                            <span class='reviewer-count'>$count tickets</span>
+                        </div>
+                        <div class='countbar-container'>
+                            <div class='countbar' style='width: {$percentage}%'></div>
+                        </div>
+                    </li>";
+            }
+            ?>
+        </ul>
     </div>
 
     <div class="chart-card">
@@ -299,6 +335,32 @@ include __DIR__ . '/assets/partials/brandbar.php';
     </div>
 </div>
 
+<!-- DUE SOON MODAL -->
+<div id="dueSoonModal" class="ds-modal">
+  <div class="ds-modal-content">
+    
+    <h2 class="ds-modal-title">Tickets Due in 24 Hours</h2>
+
+    <table class="ds-table">
+      <tbody id="dueSoonTbody"></tbody>
+    </table>
+
+    <div class="ds-buttons">
+      <button id="snoozeBtn" class="ds-btn ds-btn-secondary">Snooze (5s)</button>
+      <button id="ackBtn" class="ds-btn ds-btn-primary">Acknowledge</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Sound -->
+<audio id="alertSound">
+  <source src="/assets/sounds/notify.mp3" type="audio/mpeg">
+</audio>
+
+      <footer class="site-footer">
+        <p>© 2025 Globe • AI and Privacy Governance • All Rights Reserved</p>
+      </footer>
 
 </main>
 <script>
@@ -336,7 +398,7 @@ include __DIR__ . '/assets/partials/brandbar.php';
     const reviewerLabels = <?= json_encode($reviewers) ?>;
     const reviewerData   = <?= json_encode($ticketCount) ?>;
 
-    loadReviewerWorkloadChart(reviewerLabels, reviewerData);
+
     loadTicketVolumeChart(window.volumeLabels, window.volumeCounts);
 
 </script>

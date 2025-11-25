@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($stmt->execute()) {
-        header('Location: ../admin_dashboard.php?msg=updated');
+        header('Location: ../tickets.php?msg=updated');
         exit;
     } else {
         die('DB error: ' . $stmt->error);

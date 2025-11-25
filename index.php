@@ -11,6 +11,7 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
   <meta name="color-scheme" content="light" />
   <link rel="stylesheet" href="/assets/css/toast.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/assets/img/favicon/favicon.ico">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
     /* ---------- Design Tokens ---------- */

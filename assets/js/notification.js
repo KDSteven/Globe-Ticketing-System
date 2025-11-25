@@ -23,6 +23,12 @@
          return; // Skip if modal isn't on this page
        }
 
+         // ✅ FIX: Browser requires user interaction before allowing sound
+        let soundAllowed = false;
+        window.addEventListener("click", () => soundAllowed = true, { once: true });
+        window.addEventListener("keydown", () => soundAllowed = true, { once: true });
+        window.addEventListener("scroll", () => soundAllowed = true, { once: true });
+
        console.log('notification.js: Initializing due-soon modal.');
        let lastTicketIds = [];
 
@@ -42,8 +48,9 @@
            </tr>
          `).join('');
          MODAL.style.display = 'block';
+         
        }
-
+       
        function closeModal() { MODAL.style.display = 'none'; }
 
        async function fetchDueSoon() {
@@ -57,7 +64,15 @@
              const ids = items.map(x => x.id).join(',');
              if (ids !== lastTicketIds.join(',')) {
                lastTicketIds = items.map(x => x.id);
-               try { SOUND.currentTime = 0; SOUND.play(); } catch (e) { console.warn('notification.js: Sound play failed', e); }
+               // 🔊 Play alert sound only if user interacted (Chrome autoplay fix)
+                if (soundAllowed) {
+                    SOUND.currentTime = 0;
+                    SOUND.play().catch(err => {
+                        console.warn("Sound blocked:", err);
+                    });
+                } else {
+                    console.warn("Sound blocked until user interacts with the page.");
+                }
                openModal(items);
              }
            }
@@ -96,6 +111,8 @@
        const dropdown = document.getElementById('notifDropdown');
        const listEl = document.getElementById('notifList');
        const badge = document.getElementById('notifBadge');
+
+      
 
        if (!bell || !dropdown || !listEl) {
          console.error('notification.js: Bell dropdown elements not found. Notifications will not work.');

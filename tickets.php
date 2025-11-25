@@ -28,13 +28,13 @@ function status_class($status, $due) {
   <link rel="stylesheet" href="assets/css/admin.css">
   <script src="/assets/js/notification.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/assets/img/favicon/favicon.ico">
 </head>
 <body>
 <?php
 $brand = ['showMenuToggle'=>true,'showNotif'=>true];
 include __DIR__ . '/assets/partials/brandbar.php';
 ?>
-
 <!-- Sidebar Off-canvas -->
 <aside id="offcanvas" aria-hidden="true">
   <div class="sb-head">
@@ -142,6 +142,10 @@ include __DIR__ . '/assets/partials/brandbar.php';
     <!-- Pagination -->
     <?= build_pagination($page, $totalPages, $q, $status) ?>
   </section>
+
+        <footer class="site-footer">
+        <p>© 2025 Globe • AI and Privacy Governance • All Rights Reserved</p>
+      </footer>
 </main>
 
 <script src="/assets/js/sidebar.js"></script>
