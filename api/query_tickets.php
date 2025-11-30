@@ -61,9 +61,20 @@ $offset = ($page - 1) * $perPage;
 
 // Fetch page rows
 $selectSql = "
-  SELECT id, ticket_code, created_at, full_name, email,
-         priority, due_date, assigned_lawyer, contract_type, status
-  FROM tickets
+SELECT 
+    id,
+    ticket_code,
+    created_at,
+    completed_at,   -- ADD THIS LINE
+    full_name,
+    email,
+    priority,
+    due_date,
+    assigned_lawyer,
+    contract_type,
+    status,
+    remarks
+FROM tickets
   WHERE $where
   ORDER BY id DESC
   LIMIT ? OFFSET ?

@@ -38,15 +38,15 @@
        }
 
        function openModal(items) {
-         TBODY.innerHTML = items.map(it => `
-           <tr>
-             <td style="padding:8px;border-bottom:1px solid #f1f1f1;font-weight:700">${esc(it.ticket_code)}</td>
-             <td style="padding:8px;border-bottom:1px solid #f1f1f1">${esc(it.full_name)}</td>
-             <td style="padding:8px;border-bottom:1px solid #f1f1f1">${esc(it.contract_type)}</td>
-             <td style="padding:8px;border-bottom:1px solid #f1f1f1">${esc(it.priority)}</td>
-             <td style="padding:8px;border-bottom:1px solid #f1f1f1">${esc(it.due_text)}</td>
-           </tr>
-         `).join('');
+        TBODY.innerHTML = items.map(it => `
+          <div class="due-item">
+              <span class="col">${esc(it.ticket_code)}</span>
+              <span class="col">${esc(it.full_name)}</span>
+              <span class="col">${esc(it.contract_type)}</span>
+              <span class="col">${esc(it.priority)}</span>
+              <span class="col">${esc(it.due_text)}</span>
+          </div>
+        `).join('');
          MODAL.style.display = 'block';
          
        }

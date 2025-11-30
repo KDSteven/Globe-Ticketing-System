@@ -1,7 +1,8 @@
 <?php
 // api/due_soon.php
 session_start();
-header('Content-Type: application/json');
+header("Content-Type: application/json");
+ob_clean();
 
 if (empty($_SESSION['lawyer_id'])) {
   http_response_code(401);

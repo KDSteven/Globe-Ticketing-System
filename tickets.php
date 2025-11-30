@@ -12,12 +12,41 @@ require __DIR__ . '/utils/pagination.php';
 include __DIR__ . '/api/query_tickets.php';
 
 function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
-function status_class($status, $due) {
-  if ($status === 'Completed') return 'row-completed';
-  if ($status === 'For Revisions') return 'row-revisions';
-  if ($due && $status !== 'Completed' && $due < date('Y-m-d')) return 'row-overdue';
-  return 'row-pending';
+function status_class($status, $due_date, $completed_at = null) {
+
+    $today = date('Y-m-d');
+    $due = $due_date ? date('Y-m-d', strtotime($due_date)) : null;
+    $done = $completed_at ? date('Y-m-d', strtotime($completed_at)) : null;
+
+    // COMPLETED
+    if ($status === 'Completed') {
+
+        // Completed but after due date
+        if ($done && $due && $done > $due) {
+            return 'row-completed-late';
+        }
+
+        // Completed normally
+        return 'row-completed';
+    }
+
+    // FOR REVISIONS (and overdue)
+    if ($status === 'For Revisions') {
+        if ($due && $due < $today) {
+            return 'row-revisions-overdue';
+        }
+        return 'row-revisions';
+    }
+
+    // PENDING AND OVERDUE
+    if ($due && $due < $today) {
+        return 'row-overdue';
+    }
+
+    return 'row-pending';
 }
+
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -58,12 +87,13 @@ include __DIR__ . '/assets/partials/brandbar.php';
 
 <main class="container-fluid page" id="mainContent">
 
-  <div class="legend">
+<div class="legend">
     <span class="dot dot-green"></span> Completed
+    <span class="dot dot-blue"></span> Completed (Past Due)
     <span class="dot dot-red"></span> Overdue
     <span class="dot dot-gray"></span> Pending
     <span class="dot dot-amber"></span> For revisions
-  </div>
+</div>
 
   <!-- Search + Filter Toolbar -->
   <div class="toolbar">
@@ -103,12 +133,12 @@ include __DIR__ . '/assets/partials/brandbar.php';
           <th>REVIEWER</th>
           <th>CONTRACT TYPE</th>
           <th>ACTION</th>
-          <th>STATUS</th>
+          <th>REMARKS</th>
         </tr>
       </thead>
       <tbody>
         <?php while ($r = $rows->fetch_assoc()):
-          $class = status_class($r['status'], $r['due_date']);
+         $class = status_class($r['status'], $r['due_date'] ?? null,$r['completed_at'] ?? null);
           $reviewerName = preg_replace('/ <[^>]+>$/', '', $r['assigned_lawyer']);  
         ?>
         <tr class="<?= $class ?>">
@@ -133,7 +163,13 @@ include __DIR__ . '/assets/partials/brandbar.php';
             </form>
           </td>
 
-          <td><?= h($r['status']) ?></td>
+      <td>
+          <form action="api/update_remarks.php" method="post" style="display:flex;flex-direction:column;gap:4px;">
+              <input type="hidden" name="id" value="<?= (int)$r['id'] ?>">
+              <textarea name="remarks" rows="1" style="width:100%;"><?= h($r['remarks'] ?? '') ?></textarea>
+              <button class="btn-small" type="submit">Save</button>
+          </form>
+      </td>
         </tr>
       <?php endwhile; ?>
       </tbody>

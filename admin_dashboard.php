@@ -11,7 +11,7 @@ function h($s){ return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 /* ------------------------------------------------------
    READ FILTER INPUTS
 ------------------------------------------------------ */
-$period   = $_GET['period']  ?? 'monthly';
+$period = $_GET['period'] ?? 'all';
 $date     = $_GET['date']    ?? date('Y-m-d');
 $month    = $_GET['month']   ?? date('Y-m');
 $year     = $_GET['year']    ?? date('Y');
@@ -21,8 +21,10 @@ $quarter  = $_GET['quarter'] ?? 'Q1';
    DATE CONDITION BUILDER
 ------------------------------------------------------ */
 function dateCondition($period, $date, $month, $quarter, $year) {
-
     switch ($period) {
+
+        case "all":
+            return "1"; // no filtering
 
         case "daily":
             return "DATE(created_at) = '$date'";
@@ -45,6 +47,7 @@ function dateCondition($period, $date, $month, $quarter, $year) {
     }
 }
 
+
 $where = dateCondition($period, $date, $month, $quarter, $year);
 $whereSQL = "WHERE $where";
 
@@ -58,6 +61,30 @@ function fetchCount($conn, $whereSQL, $condition){
         $whereSQL AND $condition
     ")->fetch_assoc()['c'];
 }
+
+/* ------------------------------------------------------
+   COMPLETION TIMING METRICS
+------------------------------------------------------ */
+
+// Completed ON TIME
+$completedOnTime = $conn->query("
+    SELECT COUNT(*) AS c
+    FROM tickets
+    $whereSQL
+      AND status='Completed'
+      AND completed_at IS NOT NULL
+      AND DATE(completed_at) <= DATE(due_date)
+")->fetch_assoc()['c'];
+
+// Completed LATE
+$completedLate = $conn->query("
+    SELECT COUNT(*) AS c
+    FROM tickets
+    $whereSQL
+      AND status='Completed'
+      AND completed_at IS NOT NULL
+      AND DATE(completed_at) > DATE(due_date)
+")->fetch_assoc()['c'];
 
 $completed = fetchCount($conn, $whereSQL, "status='Completed'");
 $overdue   = fetchCount($conn, $whereSQL, "due_date < CURDATE() AND status <> 'Completed'");
@@ -228,6 +255,7 @@ if (!empty($_SESSION['lawyer_id'])) {
 
         <!-- PERIOD SELECTOR -->
         <select name="period" id="periodSelect" onchange="document.getElementById('filterForm').submit()">
+            <option value="all" <?= ($period=='all'?'selected':'') ?>>All Time</option>
             <option value="daily"    <?= ($period=='daily'?'selected':'') ?>>Daily</option>
             <option value="monthly"  <?= ($period=='monthly'?'selected':'') ?>>Monthly</option>
             <option value="quarterly"<?= ($period=='quarterly'?'selected':'') ?>>Quarterly</option>
@@ -272,12 +300,27 @@ if (!empty($_SESSION['lawyer_id'])) {
 
         <div class="kpi-card kpi-green">
             <div class="kpi-header">
-                <span class="kpi-label">Completed</span>
+                <span class="kpi-label">Total Completed</span>
                 <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
             </div>
             <div class="kpi-value"><?= $completed ?></div>
         </div>
+        <div class="kpi-card kpi-purple">
+            <div class="kpi-header">
+                <span class="kpi-label">Completed (On Time)</span>
+                <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
+            </div>
+            <div class="kpi-value"><?= $completedOnTime ?></div>
+        </div>
 
+        <div class="kpi-card kpi-gray">
+            <div class="kpi-header">
+                <span class="kpi-label">Completed (Late)</span>
+                <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
+            </div>
+            <div class="kpi-value"><?= $completedLate ?></div>
+        </div>
+        
         <div class="kpi-card kpi-amber">
             <div class="kpi-header">
                 <span class="kpi-label">Overdue</span>
@@ -301,6 +344,7 @@ if (!empty($_SESSION['lawyer_id'])) {
             </div>
             <div class="kpi-value"><?= $pending ?></div>
         </div>
+
     </section>
 
 
@@ -309,7 +353,7 @@ if (!empty($_SESSION['lawyer_id'])) {
         <h3>Reviewer Workload</h3>
         <ul class="reviewer-list">
             <?php
-            $maxCount = max($ticketCount) ?: 1;  // Avoid division by zero
+            $maxCount = !empty($ticketCount) ? max($ticketCount) : 1; // Avoid division by zero
             foreach ($reviewers as $index => $reviewer) {
                 $count = $ticketCount[$index];
                 $percentage = ($count / $maxCount) * 100;
