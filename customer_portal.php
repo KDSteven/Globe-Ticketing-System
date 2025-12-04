@@ -114,87 +114,16 @@ include __DIR__ . '/assets/partials/brandbar.php';
       </div>
     </div>
 
-      <!-- 1.3 GROUP -->
-      <div class="field">
-        <label for="group">1.3 GROUP: Select Your Group</label>
-        <div class="control">
-          <select id="group" name="group" required>
-            <option value="">Select your group…</option>
+<div class="field">
+  <label>1.3 GROUP: Select Your Group</label>
+  <select id="group" name="group" required></select>
+</div>
 
-            <optgroup label="Commercial Groups (Always CC: Roselyn Serrano)">
-              <option value="B2B">B2B (Go to next question for Tribes & Squads)</option>
-              <!-- Alex column -->
-              <option value="BB|ALEX">Broadband Business (BB)</option>
-              <option value="EDS|ALEX">Enterprise Data and Strategic Services (EDS)</option>
-              <option value="PEDG|ALEX">Product Engineering and Digital Growth (PEDG)</option>
-              <!-- Francine column -->
-              <option value="CMB|FRANCINE">Consumer Mobile Business (CMB)</option>
-              <option value="CMG|FRANCINE">Channel Management (CMG)</option>
-              <option value="MKT|FRANCINE">Marketing (MKT)</option>
-              <option value="CCO|FRANCINE">Office of the Chief Commercial Officer (CCO)</option>
-            </optgroup>
+<div class="field" id="tribe-block" style="display:none">
+  <label>B2B Tribe/Squad</label>
+  <select id="tribe" name="tribe"></select>
+</div>
 
-            <optgroup label="Other Groups">
-              <!-- Alex column -->
-              <option value="NTG|ALEX">Network Technical Group (NTG)</option>
-              <option value="ISG|ALEX">Information Services Group (ISG)</option>
-              <option value="CLSG|ALEX">Corporate & Legal Services Group (CLSG)</option>
-              <option value="CorpComm|ALEX">Corporate Communications (CorpComm)</option>
-              <option value="ISDP|ALEX">Information Security & Data Privacy (ISDP)</option>
-              <option value="ICG|ALEX">Internal Controls (ICG)</option>
-              <!-- Francine column -->
-              <option value="STT|FRANCINE">ST Telemedia (STT)</option>
-              <option value="OSMCX|FRANCINE">Office of Strategy Management & Customer Experience (OSMCX)</option>
-              <option value="FBA|FRANCINE">Finance & Administration (FBA)</option>
-              <option value="HR|FRANCINE">Human Resources (HR)</option>
-            </optgroup>
-          </select>
-        </div>
-        <small class="hint">Pick your group. If you choose B2B, you’ll then pick a Tribe/Squad.</small>
-      </div>
-
-      <!-- Tribe/Squad (only for B2B) -->
-      <div class="field" id="tribe-block" style="display:none">
-        <label for="tribe">B2B Tribe/Squad</label>
-        <div class="control">
-          <select id="tribe" name="tribe" class="select">
-            <option value="">Select your Tribe/Squad…</option>
-            <optgroup label="Atty. Alex Austria & Roselyn Serrano">
-              <option>Key Accounts - Hyperscaler</option>
-              <option>Key Accounts - Wholesale 2</option>
-              <option>Key Accounts - Conglo 2</option>
-              <option>Strategic Verticals - FSI 1</option>
-              <option>Strategic Verticals - IT & BPM 1</option>
-              <option>Strategic Verticals - IT & BPM 3</option>
-              <option>Strategic Verticals - Supply Chain 2</option>
-              <option>Strategic Verticals - Supply Chain 4</option>
-              <option>Geo & OMNI - NCL</option>
-              <option>Geo & OMNI - NGMA</option>
-              <option>Geo & OMNI - SGMA 2</option>
-              <option>Geo & OMNI - VIS 2</option>
-              <option>Geo & OMNI - OMNI</option>
-              <option>Partner Lifecycle Management (PLM)</option>
-              <option>GTIBH</option>
-            </optgroup>
-            <optgroup label="Atty. Francine Turo & Roselyn Serrano">
-              <option>Key Accounts - Wholesale 1</option>
-              <option>Key Accounts - Conglo 1</option>
-              <option>Key Accounts - Conglo 3</option>
-              <option>Strategic Verticals - FSI 2</option>
-              <option>Strategic Verticals - IT & BPM 2</option>
-              <option>Strategic Verticals - Supply Chain 1</option>
-              <option>Strategic Verticals - Supply Chain 3</option>
-              <option>Strategic Verticals - GEO VisMin</option>
-              <option>Geo & OMNI - SL</option>
-              <option>Geo & OMNI - SGMA 1</option>
-              <option>Geo & OMNI - VIS 1</option>
-              <option>Geo & OMNI - MIN</option>
-              <option>Government</option>
-            </optgroup>
-          </select>
-        </div>
-        <small class="hint">Choosing a Tribe/Squad auto-assigns the lawyer and CC emails.</small>
-      </div>
 
       <!-- Auto-filled targets -->
       <div class="field">
@@ -342,9 +271,47 @@ include __DIR__ . '/assets/partials/brandbar.php';
     </div>
   </form>
 </main>
-
   <script src="/assets/js/form-routing.js"></script>
   <script src="/assets/js/wizard.js"></script>
-  
+  <script src="/assets/js/prev_ticket_loader.js"></script>
+  <script>
+let routingData = {};
+
+fetch("/api/get_routing_list.php")
+    .then(r => r.json())
+    .then(data => routingData = data);
+
+const groupSel = document.getElementById("group");
+
+groupSel.addEventListener("change", () => {
+    const type = groupSel.value;
+
+    // B2B tribes
+    if (type === "B2B") return; // tribe handler will override
+
+    const rule = routingData[type];
+    if (!rule) return;
+
+    document.getElementById("lawyer_display").value = rule.lawyer;
+    document.getElementById("lawyer").value = rule.email;
+
+    document.getElementById("cc_display").value = rule.cc.join(", ");
+    document.getElementById("cc_emails").value = rule.cc.join(",");
+});
+
+// Tribe selection
+document.getElementById("tribe").addEventListener("change", e => {
+    const tribeName = e.target.value;
+    const rule = routingData[tribeName];
+
+    if (!rule) return;
+
+    document.getElementById("lawyer_display").value = rule.lawyer;
+    document.getElementById("lawyer").value = rule.email;
+    document.getElementById("cc_display").value = rule.cc.join(", ");
+    document.getElementById("cc_emails").value = rule.cc.join(",");
+});
+</script>
+
 </body>
 </html>

@@ -25,8 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['lawyer_role'] = $row['role'];
 
         // ✅ Redirect to dashboard with success toast message
-        header('Location: ' . $next . '?ok=' . urlencode('Welcome back, ' . $row['name'] . '!'));
+        if ($row['role'] === 'admin') {
+            header('Location: ../admin_dashboard.php?ok=' . urlencode('Welcome back, Admin!'));
+        } else {
+            header('Location: ../lawyer_dashboard.php?ok=' . urlencode('Welcome back, ' . $row['name'] . '!'));
+        }
         exit;
+
       }
     }
 

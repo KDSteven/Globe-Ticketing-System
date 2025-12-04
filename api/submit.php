@@ -41,19 +41,84 @@ $daysToAdd = 5; // default
 //   $daysToAdd = 3;
 // }
 
-// ---- SLA / Due date helpers -----------------------------------------------
-$createdAt = new DateTime('now', new DateTimeZone('Asia/Manila')); // or your TZ
+$createdAt = new DateTime('now', new DateTimeZone('Asia/Manila'));
 
-function addBusinessDays(DateTime $date, int $days): DateTime {
-  $d = clone $date;
-  while ($days > 0) {
-    $d->modify('+1 day');
-    if ((int)$d->format('N') < 6) { // 1..5 = Mon..Fri
-      $days--;
+
+// ------------------------------------------------------------
+// 1. Auto Philippine Holiday Detector (PUT THIS HERE)
+// ------------------------------------------------------------
+function isPhilippineHoliday(DateTime $date, mysqli $conn): bool {
+    $year = (int)$date->format('Y');
+    $ymd  = $date->format('Y-m-d');
+
+    // Regular yearly holidays
+    $regular = [
+        "$year-01-01",
+        "$year-05-01",
+        "$year-06-12",
+        "$year-11-30",
+        "$year-12-25",
+        "$year-12-30",
+    ];
+
+    // Special holidays
+    $special = [
+        "$year-02-25",
+        "$year-11-01",
+        "$year-11-02",
+        "$year-12-08",
+    ];
+
+    // Holy Week (auto computed)
+    $easter = new DateTime('@' . easter_date($year));
+    $easter->setTimezone(new DateTimeZone('Asia/Manila'));
+
+    $maundy = clone $easter; $maundy->modify('-3 days');
+    $goodFri = clone $easter; $goodFri->modify('-2 days');
+    $blackSat = clone $easter; $blackSat->modify('-1 day');
+
+    $holyweek = [
+        $maundy->format('Y-m-d'),
+        $goodFri->format('Y-m-d'),
+        $blackSat->format('Y-m-d'),
+    ];
+
+    // Auto recognized recurring holidays
+    if (in_array($ymd, $regular) || in_array($ymd, $special) || in_array($ymd, $holyweek)) {
+        return true;
     }
-  }
-  return $d;
+
+    // Check database for sudden holidays
+    $rs = $conn->query("SELECT 1 FROM holidays WHERE date = '$ymd' LIMIT 1");
+    return ($rs && $rs->num_rows > 0);
 }
+
+
+// ------------------------------------------------------------
+// 2. Business Day Calculator (Modify your function to call above)
+// ------------------------------------------------------------
+function addBusinessDays(DateTime $date, int $days, mysqli $conn): DateTime {
+    $d = clone $date;
+
+    while ($days > 0) {
+        $d->modify('+1 day');
+
+        // Skip weekends
+        if (in_array($d->format('N'), [6, 7])) {
+            continue;
+        }
+
+        // Skip PH holidays
+        if (isPhilippineHoliday($d, $conn)) {
+            continue;
+        }
+
+        $days--;
+    }
+
+    return $d;
+}
+
 
 /**
  * Pick SLA days.
@@ -66,7 +131,7 @@ if (isset($customer) && trim(mb_strtolower($customer)) === 'globe') {
   $daysToAdd = 3;
 }
 
-$dueDate   = addBusinessDays($createdAt, $daysToAdd)->format('Y-m-d');        // DATE
+$dueDate   = addBusinessDays($createdAt, $daysToAdd, $conn)->format('Y-m-d');       // DATE
 $createdTS = $createdAt->format('Y-m-d H:i:s');                                // DATETIME
 $priority  = $_POST['priority'] ?? 'Normal';                                   // Enum/Text
 $status    = 'Pending';                                                        // default

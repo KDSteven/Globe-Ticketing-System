@@ -46,23 +46,6 @@ $stmt->close();
    🔥 TEST MODE (FORCE MODAL DATA)
    Enable this block to ALWAYS trigger the modal
 --------------------------------------------------------- */
-$TEST_MODE = true;
-
-if ($TEST_MODE) {
-  echo json_encode([
-    "items" => [
-      [
-        "id" => 321,
-        "ticket_code" => "FORCE-MODAL",
-        "full_name" => "John Debug",
-        "contract_type" => "TEST CONTRACT",
-        "priority" => "High",
-        "due_text" => "Due in 23 hours"
-      ]
-    ]
-  ]);
-  exit;
-}
 
 /* --------------------------------------------------------
    NORMAL MODE — Return real DB data

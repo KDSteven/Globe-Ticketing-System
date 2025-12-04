@@ -1,0 +1,163 @@
+/* ---------------------------
+   Manage Lawyers – Custom Styles
+   --------------------------- */
+
+.page-wrapper {
+    width: min(1200px, 90%);
+    margin: 30px auto 60px;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+}
+
+.actions-bar {
+    margin-bottom: 20px;
+}
+
+.btn.primary {
+    background: #2E3192;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    display: inline-block;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn.primary:hover {
+    background: #1f2470;
+}
+
+.card-table {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.data-table th {
+    text-align: left;
+    padding: 12px;
+    background: #f4f5fb;
+    font-weight: 700;
+    border-bottom: 2px solid #dcddee;
+}
+
+.data-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e8e8e8;
+    font-size: 14px;
+}
+
+.data-table tr:hover {
+    background: #fafbff;
+}
+
+.btn.small {
+    padding: 6px 10px;
+    font-size: 13px;
+    background: #e9ecff;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-right: 6px;
+    display: inline-block;
+}
+
+.btn.small:hover {
+    background: #d5dafc;
+}
+
+.btn.small.danger {
+    background: #ffe3e3;
+    color: #a40000;
+}
+
+.btn.small.danger:hover {
+    background: #ffcdcd;
+}
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9000;
+}
+
+.modal-box {
+    background: #fff;
+    padding: 28px;
+    width: min(420px, 92%);
+    border-radius: 14px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+}
+
+.modal-box h2 {
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+.modal-box label {
+    font-weight: 600;
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 4px;
+}
+
+.modal-box input,
+.modal-box select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn.secondary {
+    background: #e3e3e3;
+    padding: 8px 14px;
+    border-radius: 8px;
+}
+.multiselect {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: white;
+    max-height: 150px;
+}
+.multiselect option {
+    padding: 6px;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+    .data-table th, .data-table td {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    .btn.small {
+        padding: 5px 8px;
+    }
+}

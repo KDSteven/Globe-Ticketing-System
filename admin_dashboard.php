@@ -1,6 +1,7 @@
 <?php
 session_start();
-if (empty($_SESSION['lawyer_id'])) {
+
+if (empty($_SESSION['lawyer_id']) || ($_SESSION['lawyer_role'] ?? '') !== 'admin') {
     header('Location: login.php');
     exit;
 }
@@ -214,7 +215,7 @@ while ($row = $vres->fetch_assoc()) {
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Dashboard – Data Agreements & Contracts</title>
+    <title>Admin Dashboard – Data Agreements & Contracts</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" href="assets/css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
@@ -247,8 +248,9 @@ if (!empty($_SESSION['lawyer_id'])) {
 ?>
 
 <div class="welcome-message">
-    <p>Hello! Welcome Back, <strong><?= h($userName) ?>!</strong></p>
+    <p>Hello Admin, <strong><?= h($userName) ?>!</strong></p>
 </div>
+
 
 <div class="date-filter-bar">
     <form method="GET" id="filterForm">
@@ -269,6 +271,9 @@ if (!empty($_SESSION['lawyer_id'])) {
 
         <button type="submit" class="btn primary">Apply</button>
     </form>
+    <button type="button" class="btn secondary" id="addHolidayBtn">
+        + Add Holiday
+    </button>
 </div>
 
 <!-- SIDEBAR -->
@@ -279,12 +284,13 @@ if (!empty($_SESSION['lawyer_id'])) {
     </div>
 
     <nav class="sb-nav">
-        <a href="admin_dashboard.php">Dashboard</a>
+        <a href="admin_dashboard.php">Admin Dashboard</a>
         <a href="tickets.php">All Tickets</a>
-        <a href="tickets.php?status=Pending">Pending</a>
-        <a href="tickets.php?status=For%20Revisions">For Revisions</a>
-        <a href="tickets.php?status=Completed">Completed</a>
-        <a href="tickets.php?status=Overdue">Overdue</a>
+        <hr>
+        <a href="manage_lawyers.php">Manage Lawyers</a>
+        <a href="manage_routing.php">Routing Rules</a>
+        <a href="manage_holidays.php">Holidays</a>
+        <a href="settings.php">System Settings</a>
         <hr>
         <a href="/api/logout.php">Logout</a>
     </nav>
@@ -397,6 +403,26 @@ if (!empty($_SESSION['lawyer_id'])) {
   </div>
 </div>
 
+<!-- ADD HOLIDAY MODAL -->
+<div id="holidayModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <h2>Add Sudden Holiday</h2>
+
+        <form id="holidayForm" method="POST" action="/api/save_holiday.php">
+            <label>Date:</label>
+            <input type="date" name="date" required>
+
+            <label>Description:</label>
+            <input type="text" name="description" required>
+
+            <div class="modal-actions">
+                <button type="submit" class="btn primary">Save</button>
+                <button type="button" id="closeHolidayModal" class="btn secondary">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Sound -->
 <audio id="alertSound">
   <source src="/assets/sounds/notify.mp3" type="audio/mpeg">
@@ -437,6 +463,8 @@ if (!empty($_SESSION['lawyer_id'])) {
 <script src="/assets/js/notification.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/assets/js/charts.js"></script>
+<script src="/assets/js/showToast.js"></script>
+<script src="/assets/js/functions.js"></script>
 
 <script>
     const reviewerLabels = <?= json_encode($reviewers) ?>;
@@ -444,9 +472,7 @@ if (!empty($_SESSION['lawyer_id'])) {
 
 
     loadTicketVolumeChart(window.volumeLabels, window.volumeCounts);
-
 </script>
-
 
 </body>
 </html>

@@ -64,24 +64,49 @@ function status_class($status, $due_date, $completed_at = null) {
 $brand = ['showMenuToggle'=>true,'showNotif'=>true];
 include __DIR__ . '/assets/partials/brandbar.php';
 ?>
-<!-- Sidebar Off-canvas -->
-<aside id="offcanvas" aria-hidden="true">
-  <div class="sb-head">
-    <span>Navigation</span>
-    <button id="sbClose" aria-label="Close menu">✕</button>
-  </div>
 
-  <nav class="sb-nav">
-    <a href="admin_dashboard.php">Dashboard</a>
-    <a href="tickets.php">All Tickets</a>
-    <a href="tickets.php?status=Pending">Pending</a>
-    <a href="tickets.php?status=For%20Revisions">For Revisions</a>
-    <a href="tickets.php?status=Completed">Completed</a>
-    <a href="tickets.php?status=Overdue">Overdue</a>
-    <hr>
-    <a href="/api/logout.php">Logout</a>
-  </nav>
+<!-- SIDEBAR -->
+<aside id="offcanvas" aria-hidden="true">
+    <div class="sb-head">
+        <span>Navigation</span>
+        <button id="sbClose" aria-label="Close">✕</button>
+    </div>
+
+    <nav class="sb-nav">
+        <?php if ($_SESSION['lawyer_role'] === 'admin'): ?>
+
+            <!-- ADMIN SIDEBAR -->
+            <a href="admin_dashboard.php">Admin Dashboard</a>
+            <a href="tickets.php">All Tickets</a>
+            <hr>
+            <a href="manage_lawyers.php">Manage Lawyers</a>
+            <a href="manage_routing.php">Routing Rules</a>
+            <a href="manage_holidays.php">Holidays</a>
+            <a href="settings.php">System Settings</a>
+            <hr>
+            <a href="/api/logout.php">Logout</a>
+
+        <?php else: ?>
+
+            <!-- LAWYER SIDEBAR -->
+            <?php 
+            $dashboard = ($_SESSION['lawyer_role'] === 'admin') 
+                ? 'admin_dashboard.php' 
+                : 'lawyer_dashboard.php';
+            ?>
+            <a href="<?= $dashboard ?>">Dashboard</a>
+            <a href="tickets.php">All Tickets</a>
+            <a href="tickets.php?status=Pending">Pending</a>
+            <a href="tickets.php?status=For%20Revisions">For Revisions</a>
+            <a href="tickets.php?status=Completed">Completed</a>
+            <a href="tickets.php?status=Overdue">Overdue</a>
+            <hr>
+            <a href="/api/logout.php">Logout</a>
+
+        <?php endif; ?>
+    </nav>
 </aside>
+
 
 <div id="sbBackdrop" aria-hidden="true"></div>
 
@@ -139,7 +164,7 @@ include __DIR__ . '/assets/partials/brandbar.php';
       <tbody>
         <?php while ($r = $rows->fetch_assoc()):
          $class = status_class($r['status'], $r['due_date'] ?? null,$r['completed_at'] ?? null);
-          $reviewerName = preg_replace('/ <[^>]+>$/', '', $r['assigned_lawyer']);  
+          $reviewerName = $r['reviewer_name'] ?? 'Unassigned';
         ?>
         <tr class="<?= $class ?>">
           <td><?= h($r['ticket_code']) ?></td>

@@ -1,8 +1,2 @@
-<?php 
-$password = "lawyer123";
-
-$hash = password_hash($password, PASSWORD_DEFAULT);
-
-echo $hash;
-
-?>
+<?php
+echo password_hash("admin123", PASSWORD_DEFAULT);
