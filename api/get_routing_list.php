@@ -25,4 +25,31 @@ while ($r = $res->fetch_assoc()) {
     ];
 }
 
-echo json_encode($final);
+$dropdown = [
+    "Commercial Groups" => [
+        "B2B",
+        "Broadband Business (BB)",
+        "Enterprise Data and Strategic Services (EDS)",
+        "Product Engineering and Digital Growth (PEDG)",
+        "Consumer Mobile Business (CMB)",
+        "Channel Management (CMG)",
+        "Marketing (MKT)",
+        "Office of the Chief Commercial Officer (CCO)"
+    ],
+    "Other Groups" => [
+        "Network Technical Group (NTG)",
+        "Information Services Group (ISG)",
+        "Corporate and Legal Services Group (CLSG)",
+        "Corporate Communications (CorpComm)",
+        "Information Security and Data Privacy (ISDP)",
+        "Internal Controls (ICG)",
+        "ST Telemedia (STT)",
+        "Office of Strategy Mgmt & Customer Experience (OSMCX)",
+        "Finance & Administration (FBA)",
+        "Human Resources (HR)"
+    ]
+];
+echo json_encode([
+    "routing" => $final,
+    "dropdown" => $dropdown
+]);

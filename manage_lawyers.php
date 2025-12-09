@@ -83,18 +83,23 @@ include __DIR__ . '/assets/partials/brandbar.php';
             <td><?= h($row['role']) ?></td>
             <td><?= h(date("M d, Y", strtotime($row['created_at']))) ?></td>
             <td>
-                <button class="btn small editLawyerBtn" data-id="<?= $row['id'] ?>" data-name="<?= h($row['name']) ?>"
+                <button class="btn small editLawyerBtn"
+                        title="Edit Lawyer"
+                        data-id="<?= $row['id'] ?>"
+                        data-name="<?= h($row['name']) ?>"
                         data-email="<?= h($row['email']) ?>"
-                        data-role="<?= $row['role'] ?>">Edit</button>
+                        data-role="<?= $row['role'] ?>">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
 
                 <?php if ($row['role'] !== 'admin'): ?>
                 <a class="btn small danger"
-                   onclick="return confirm('Delete this lawyer? This action cannot be undone.')"
-                   href="api/lawyer_delete.php?id=<?= $row['id'] ?>">
-                   Delete
+                title="Delete Lawyer"
+                onclick="return confirm('Delete this lawyer? This action cannot be undone.')"
+                href="api/lawyer_delete.php?id=<?= $row['id'] ?>">
+                    <i class="fa-solid fa-trash"></i>
                 </a>
                 <?php endif; ?>
-
             </td>
         </tr>
         <?php endwhile; ?>

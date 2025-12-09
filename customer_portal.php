@@ -114,15 +114,19 @@ include __DIR__ . '/assets/partials/brandbar.php';
       </div>
     </div>
 
-<div class="field">
-  <label>1.3 GROUP: Select Your Group</label>
-  <select id="group" name="group" required></select>
-</div>
+      <div class="field">
+        <label>1.3 GROUP: Select Your Group</label>
+        <select id="group" name="group" required>
+          <option value="" disabled selected>Select your group...</option>
+        </select>
+      </div>
 
-<div class="field" id="tribe-block" style="display:none">
-  <label>B2B Tribe/Squad</label>
-  <select id="tribe" name="tribe"></select>
-</div>
+      <div class="field" id="tribe-block" style="display:none">
+        <label>B2B Tribe/Squad</label>
+        <select id="tribe" name="tribe">
+          <option value="" disabled selected>Select your Tribe/Squad...</option>
+        </select>
+      </div>
 
 
       <!-- Auto-filled targets -->
@@ -274,36 +278,124 @@ include __DIR__ . '/assets/partials/brandbar.php';
   <script src="/assets/js/form-routing.js"></script>
   <script src="/assets/js/wizard.js"></script>
   <script src="/assets/js/prev_ticket_loader.js"></script>
-  <script>
+<script>
 let routingData = {};
+let dropdownData = {};
 
 fetch("/api/get_routing_list.php")
     .then(r => r.json())
-    .then(data => routingData = data);
+    .then(data => {
+        routingData  = data.routing;
+        dropdownData = data.dropdown;
 
+        populateGroupDropdown();
+    });
+
+/* ----------------------------------------
+   1. POPULATE MAIN GROUP DROPDOWN
+---------------------------------------- */
+function populateGroupDropdown() {
+    const groupSel = document.getElementById("group");
+    groupSel.innerHTML = "";
+
+    // ADD PLACEHOLDER HERE
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Select your group...";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    groupSel.appendChild(placeholder);
+
+    Object.entries(dropdownData).forEach(([sectionLabel, groupList]) => {
+        const optGroup = document.createElement("optgroup");
+        optGroup.label = sectionLabel;
+
+        groupList.forEach(groupName => {
+            const opt = document.createElement("option");
+            opt.value = groupName === "B2B" ? "B2B" : groupName;
+            opt.textContent = groupName;
+            optGroup.appendChild(opt);
+        });
+
+        groupSel.appendChild(optGroup);
+    });
+}
+
+/* ----------------------------------------
+   2. WHEN MAIN GROUP CHANGES
+---------------------------------------- */
 const groupSel = document.getElementById("group");
+const tribeBlock = document.getElementById("tribe-block");
+const tribeSel   = document.getElementById("tribe");
 
 groupSel.addEventListener("change", () => {
-    const type = groupSel.value;
+    const selected = groupSel.value;
 
-    // B2B tribes
-    if (type === "B2B") return; // tribe handler will override
+    // Reset lawyer + CC fields
+    document.getElementById("lawyer_display").value = "";
+    document.getElementById("lawyer").value = "";
+    document.getElementById("cc_display").value = "";
+    document.getElementById("cc_emails").value = "";
 
-    const rule = routingData[type];
+    // If B2B → show tribe list
+    if (selected === "B2B") {
+        showB2BTribes();
+        return;
+    }
+
+    // If NOT B2B → hide tribes & auto-fill routing
+    tribeBlock.style.display = "none";
+
+    const rule = routingData[selected];
     if (!rule) return;
 
     document.getElementById("lawyer_display").value = rule.lawyer;
     document.getElementById("lawyer").value = rule.email;
-
     document.getElementById("cc_display").value = rule.cc.join(", ");
     document.getElementById("cc_emails").value = rule.cc.join(",");
 });
 
-// Tribe selection
-document.getElementById("tribe").addEventListener("change", e => {
-    const tribeName = e.target.value;
-    const rule = routingData[tribeName];
+/* ----------------------------------------
+   3. POPULATE B2B TRIBE DROPDOWN
+---------------------------------------- */
+function showB2BTribes() {
+    tribeBlock.style.display = "block";
+    tribeSel.innerHTML = "";
 
+    // Get all routing keys that belong to B2B squads
+    const b2bTribes = Object.keys(routingData).filter(key =>
+        key.includes("Key Accounts") ||
+        key.includes("Strategic Verticals") ||
+        key.includes("Geo & OMNI") ||
+        key.includes("Government") ||
+        key.includes("PLM") ||
+        key.includes("GTIBH")
+    );
+
+    // Sort alphabetically to look clean
+    b2bTribes.sort();
+    // ADD PLACEHOLDER BACK
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Select your Tribe/Squad...";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    tribeSel.appendChild(placeholder);
+
+    b2bTribes.forEach(t => {
+        const opt = document.createElement("option");
+        opt.value = t;
+        opt.textContent = t;
+        tribeSel.appendChild(opt);
+    });
+}
+
+/* ----------------------------------------
+   4. WHEN TRIBE IS SELECTED
+---------------------------------------- */
+tribeSel.addEventListener("change", () => {
+    const tribeName = tribeSel.value;
+    const rule = routingData[tribeName];
     if (!rule) return;
 
     document.getElementById("lawyer_display").value = rule.lawyer;

@@ -149,7 +149,19 @@
 .multiselect option {
     padding: 6px;
 }
-
+.table-scroll {
+    max-height: 500px;     /* Adjust height to fit your design */
+    overflow-y: auto;
+    overflow-x: hidden;    /* or auto if table is wider */
+    border: 1px solid #ddd;
+}
+/* Keep table header fixed (optional but recommended) */
+.table-scroll thead tr th {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 5;
+}
 /* Responsive */
 @media (max-width: 700px) {
     .data-table th, .data-table td {

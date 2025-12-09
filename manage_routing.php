@@ -39,6 +39,9 @@ $rules = $conn->query("
     ORDER BY r.ticket_type ASC
 ")->fetch_all(MYSQLI_ASSOC);
 
+$success = $_GET['success'] ?? null;
+$error   = $_GET['error'] ?? null;
+
 ?>
 <!doctype html>
 <html>
@@ -47,6 +50,7 @@ $rules = $conn->query("
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" href="assets/css/admin.css">
     <link rel="stylesheet" href="assets/css/manage_lawyers.css">
+    <link rel="stylesheet" href="assets/css/toast.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
 
@@ -91,45 +95,59 @@ include __DIR__ . '/assets/partials/brandbar.php';
 </div>
 
 <div class="card" style="padding:20px;">
-<table class="data-table">
-<thead>
-<tr>
-    <th>Ticket Type</th>
-    <th>Assigned Lawyer</th>
-    <th>Status</th>
-    <th width="240px">Actions</th>
-</tr>
-</thead>
-
-<tbody>
-<?php foreach ($rules as $row): ?>
-<tr>
-    <td><?= h($row['ticket_type']) ?></td>
-    <td><?= h($row['lawyer_name']) ?></td>
-    <td><?= $row['active'] ? "Active" : "Disabled" ?></td>
-
-    <td>
-        <button class="btn small editRuleBtn"
-            data-id="<?= $row['id'] ?>"
-            data-type="<?= h($row['ticket_type']) ?>"
-            data-lawyer="<?= $row['assigned_lawyer'] ?>"
-            data-active="<?= $row['active'] ?>"
-            data-cc="<?= h($row['cc_emails'] ?? '') ?>"
+    <div class="search-bar" style="margin-bottom:15px; max-width:300px;">
+        <input 
+            type="text" 
+            id="routingSearch" 
+            class="big-input" 
+            placeholder="Search ticket type..."
+            style="padding:8px 12px;"
         >
-            Edit
-        </button>
+    </div>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Ticket Type</th>
+                <th>Assigned Lawyer</th>
+                <th>Status</th>
+                <th width="240px">Actions</th>
+            </tr>
+            </thead>
 
-        <button class="btn small danger deleteRuleBtn"
-                data-id="<?= $row['id'] ?>"
-                data-type="<?= h($row['ticket_type']) ?>">
-            Delete
-        </button>
-    </td>
-</tr>
-<?php endforeach; ?>
-</tbody>
-</table>
+            <tbody>
+            <?php foreach ($rules as $row): ?>
+            <tr>
+                <td><?= h($row['ticket_type']) ?></td>
+                <td><?= h($row['lawyer_name']) ?></td>
+                <td><?= $row['active'] ? "Active" : "Disabled" ?></td>
+
+                <td>
+                    <button class="btn small editRuleBtn"
+                        title="Edit"
+                        data-id="<?= $row['id'] ?>"
+                        data-type="<?= h($row['ticket_type']) ?>"
+                        data-lawyer="<?= $row['assigned_lawyer'] ?>"
+                        data-active="<?= $row['active'] ?>"
+                        data-cc="<?= h($row['cc_emails'] ?? '') ?>"
+                    >
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+
+                    <button class="btn small danger deleteRuleBtn"
+                            title="Delete"
+                            data-id="<?= $row['id'] ?>"
+                            data-type="<?= h($row['ticket_type']) ?>">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
+
 
 <footer class="site-footer">
   <p>© 2025 Globe • AI and Privacy Governance • All Rights Reserved</p>
@@ -146,14 +164,23 @@ include __DIR__ . '/assets/partials/brandbar.php';
 
             <label>Ticket Type:</label>
             <select name="ticket_type" required>
-                <option value="">Select type…</option>
-                <?php foreach ($routingConfig as $type => $lawyerKey): ?>
-                    <option value="<?= h($type) ?>"><?= h($type) ?></option>
+                <option value="" disabled selected>Select type…</option>
+
+                <?php foreach ($routingConfig as $group => $items): ?>
+                    <?php if ($group === "_LAWYERS") continue; ?>
+
+                    <optgroup label="<?= h($group) ?>">
+                        <?php foreach ($items as $ticketType => $lawyerKey): ?>
+                            <option value="<?= h($ticketType) ?>"><?= h($ticketType) ?></option>
+                        <?php endforeach; ?>
+                    </optgroup>
+
                 <?php endforeach; ?>
             </select>
 
             <label>Assign to Lawyer:</label>
             <select name="assigned_lawyer" required>
+                <option value="" disabled selected>Assign a Lawyer… </option>
                 <?php foreach ($lawyers as $l): ?>
                     <option value="<?= $l['id'] ?>"><?= h($l['name']) ?></option>
                 <?php endforeach; ?>
@@ -161,6 +188,7 @@ include __DIR__ . '/assets/partials/brandbar.php';
 
             <label>CC Lawyers:</label>
             <select name="cc_emails[]" id="addRuleCC">
+                <option value="" disabled selected>Select a Lawyer... </option>
                 <?php foreach ($lawyers as $l): ?>
                     <option value="<?= h($l['email']) ?>">
                         <?= h($l['email']) ?>
@@ -194,8 +222,18 @@ include __DIR__ . '/assets/partials/brandbar.php';
 
             <label>Ticket Type:</label>
             <select name="ticket_type" id="editRuleType" required>
-                <?php foreach ($routingConfig as $type => $lawyerKey): ?>
-                    <option value="<?= h($type) ?>"><?= h($type) ?></option>
+
+                <?php foreach ($routingConfig as $group => $items): ?>
+                    <?php if ($group === "_LAWYERS") continue; ?>
+
+                    <optgroup label="<?= h($group) ?>">
+
+                        <?php foreach ($items as $ticketType => $lawyerKey): ?>
+                            <option value="<?= h($ticketType) ?>"><?= h($ticketType) ?></option>
+                        <?php endforeach; ?>
+
+                    </optgroup>
+
                 <?php endforeach; ?>
             </select>
 
@@ -253,7 +291,8 @@ include __DIR__ . '/assets/partials/brandbar.php';
 <!-- JS -->
 <script src="/assets/js/sidebar.js"></script>
 <script src="/assets/js/notification.js"></script>
-<script src="assets/js/showToast.js"></script>
+<script src="/assets/js/Toast.js"></script>
+<script src="/assets/js/showToast.js"></script>
 <script src="assets/js/functions.js"></script>
 
 <script>
@@ -289,6 +328,29 @@ document.getElementById("closeEditRuleModal").onclick = () =>
 toast.success("Success", <?= json_encode($_GET['success']) ?>);
 </script>
 <?php endif; ?>
+
+<script>
+document.getElementById("routingSearch").addEventListener("keyup", function() {
+    const term = this.value.toLowerCase();
+    const rows = document.querySelectorAll(".data-table tbody tr");
+
+    rows.forEach(row => {
+        const ticketType = row.cells[0].innerText.toLowerCase();
+        const lawyer     = row.cells[1].innerText.toLowerCase();
+        const status     = row.cells[2].innerText.toLowerCase();
+
+        if (
+            ticketType.includes(term) || 
+            lawyer.includes(term) ||
+            status.includes(term)
+        ) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+});
+</script>
 
 </body>
 </html>
