@@ -29,5 +29,5 @@ $stmt = $conn->prepare("
 $stmt->bind_param("siisi", $ticket_type, $assigned_lawyer, $active, $cc_string, $id);
 $stmt->execute();
 
-header("Location: /manage_routing.php?success=Rule+Updated");
+header("Location: /manage_routing.php?ok=Rule+Updated");
 exit;

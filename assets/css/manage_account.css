@@ -1,0 +1,39 @@
+.account-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+}
+
+.account-section h2 {
+    margin-bottom: 10px;
+}
+
+.account-form input {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.mfa-box {
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+}
+
+.mfa-box.inactive {
+    background: #ffecec;
+    color: #b90000;
+}
+
+.mfa-box.active {
+    background: #e5f7e8;
+    color: #187a31;
+}
+
+.device-list {
+    list-style: none;
+    padding-left: 0;
+}
