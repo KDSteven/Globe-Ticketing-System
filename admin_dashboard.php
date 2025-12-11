@@ -287,7 +287,7 @@ if (!empty($_SESSION['lawyer_id'])) {
         <a href="admin_dashboard.php">Admin Dashboard</a>
         <a href="tickets.php">All Tickets</a>
         <hr>
-        <a href="manage_account.php">Account Management</a>
+        <a href="manage_account.php">My Account</a>
         <a href="manage_lawyers.php">Manage Lawyers</a>
         <a href="manage_routing.php">Routing Rules</a>
         <a href="manage_holidays.php">Holidays</a>

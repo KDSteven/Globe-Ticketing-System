@@ -291,6 +291,8 @@ if (!empty($_SESSION['lawyer_id'])) {
         <a href="tickets.php?status=Completed">Completed</a>
         <a href="tickets.php?status=Overdue">Overdue</a>
         <hr>
+        <a href="manage_account.php">My Account</a>
+        <hr>
         <a href="/api/logout.php">Logout</a>
     </nav>
 </aside>

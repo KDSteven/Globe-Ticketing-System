@@ -6,7 +6,7 @@ if (!isset($_SESSION['lawyer_id'])) {
 }
 
 $name = $_SESSION['lawyer_name'];
-$email = $_SESSION['lawyer_email'] ?? 'unknown@globe.com.ph';
+$email = $_SESSION['lawyer_email'];
 $role = $_SESSION['lawyer_role'];
 ?>
 
@@ -34,24 +34,10 @@ include __DIR__ . '/assets/partials/brandbar.php';
 
 <!-- SIDEBAR -->
 <aside id="offcanvas" aria-hidden="true">
-    <div class="sb-head">
-        <span>Navigation</span>
-        <button id="sbClose" aria-label="Close">✕</button>
-    </div>
-
-    <nav class="sb-nav">
-        <a href="admin_dashboard.php">Admin Dashboard</a>
-        <a href="tickets.php">All Tickets</a>
-        <hr>
-        <a href="manage_account.php">Account Management</a>
-        <a href="manage_lawyers.php">Manage Lawyers</a>
-        <a href="manage_routing.php">Routing Rules</a>
-        <a href="manage_holidays.php">Holidays</a>
-        <a href="settings.php">System Settings</a>
-        <hr>
-        <a href="/api/logout.php">Logout</a>
-    </nav>
+    <?php include __DIR__ . '/assets/partials/sidebar_common.php'; ?>
 </aside>
+<div id="sbBackdrop" aria-hidden="true"></div>
+
 
 <main class="container page">
 
@@ -68,25 +54,43 @@ include __DIR__ . '/assets/partials/brandbar.php';
   </section>
 
   <!-- ===================== CHANGE PASSWORD ===================== -->
-  <section class="card account-section">
+ <section class="card account-section">
     <h2><i class="fa-solid fa-key"></i> Change Password</h2>
 
     <form id="changePwForm" class="account-form">
 
-      <label>Current Password</label>
-      <input type="password" id="curr_pw" required>
+        <div class="form-group">
+            <label for="curr_pw">Current Password</label>
+            <div class="input-wrap">
+                <input type="password" id="curr_pw" required>
+                <i class="fa-solid fa-lock icon"></i>
+            </div>
+        </div>
 
-      <label>New Password</label>
-      <input type="password" id="new_pw" required>
+        <div class="form-group">
+            <label for="new_pw">New Password</label>
+            <div class="input-wrap">
+                <input type="password" id="new_pw" required>
+                <i class="fa-solid fa-key icon"></i>
+            </div>
+            <small class="hint">Use at least 8 characters including letters and numbers.</small>
+        </div>
 
-      <label>Confirm New Password</label>
-      <input type="password" id="confirm_pw" required>
+        <div class="form-group">
+            <label for="confirm_pw">Confirm New Password</label>
+            <div class="input-wrap">
+                <input type="password" id="confirm_pw" required>
+                <i class="fa-solid fa-check icon"></i>
+                <small id="pwMatchMsg" class="pw-hint"></small>
+            </div>
+        </div>
 
-      <button type="submit" class="btn primary" style="margin-top:10px">
-        Update Password
-      </button>
+        <button type="submit" class="btn primary update-btn">
+            Update Password
+        </button>
+
     </form>
-  </section>
+</section>
 
   <!-- ===================== MFA / OKTA VERIFICATION ===================== -->
   <section class="card account-section">
@@ -131,7 +135,7 @@ include __DIR__ . '/assets/partials/brandbar.php';
 <script src="/assets/js/sidebar.js"></script>
 <script src="/assets/js/toast.js"></script>
 <script src="/assets/js/showToast.js"></script>
-<script src="/assets/js/account.js"></script>
+<script src="/assets/js/accounts.js"></script>
 </body>
 </html>
 

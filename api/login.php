@@ -22,7 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // ✅ Success — set session
         $_SESSION['lawyer_id']   = (int)$row['id'];
         $_SESSION['lawyer_name'] = $row['name'];
+        $_SESSION['lawyer_email'] = $row['email']; 
         $_SESSION['lawyer_role'] = $row['role'];
+       
 
         // ✅ Redirect to dashboard with success toast message
         if ($row['role'] === 'admin') {

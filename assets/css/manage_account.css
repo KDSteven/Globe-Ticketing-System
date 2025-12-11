@@ -37,3 +37,80 @@
     list-style: none;
     padding-left: 0;
 }
+/* Wrapper grid remains */
+.account-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 24px;
+}
+
+/* Form groups */
+.form-group {
+    margin-bottom: 16px;
+}
+
+/* Label styling */
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* Input wrapper with icon */
+.input-wrap {
+    position: relative;
+}
+
+.input-wrap input {
+    width: 100%;
+    padding: 12px 38px 12px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    font-size: 15px;
+    transition: border-color 0.2s;
+}
+
+.input-wrap input:focus {
+    border-color: #2a3faa; /* Globe Blue */
+}
+
+/* Icon inside input */
+.input-wrap .icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    pointer-events: none;
+    font-size: 14px;
+}
+
+/* Button spacing */
+.update-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 12px;
+}
+
+/* Hint text */
+.hint {
+    font-size: 13px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.pw-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.pw-hint.ok {
+    color: #0a7d26; /* green */
+}
+
+.pw-hint.error {
+    color: #c70000; /* red */
+}

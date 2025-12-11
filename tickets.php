@@ -66,46 +66,11 @@ include __DIR__ . '/assets/partials/brandbar.php';
 ?>
 
 <!-- SIDEBAR -->
+<!-- SIDEBAR -->
 <aside id="offcanvas" aria-hidden="true">
-    <div class="sb-head">
-        <span>Navigation</span>
-        <button id="sbClose" aria-label="Close">✕</button>
-    </div>
-
-    <nav class="sb-nav">
-        <?php if ($_SESSION['lawyer_role'] === 'admin'): ?>
-
-            <!-- ADMIN SIDEBAR -->
-            <a href="admin_dashboard.php">Admin Dashboard</a>
-            <a href="tickets.php">All Tickets</a>
-            <hr>
-            <a href="manage_lawyers.php">Manage Lawyers</a>
-            <a href="manage_routing.php">Routing Rules</a>
-            <a href="manage_holidays.php">Holidays</a>
-            <a href="settings.php">System Settings</a>
-            <hr>
-            <a href="/api/logout.php">Logout</a>
-
-        <?php else: ?>
-
-            <!-- LAWYER SIDEBAR -->
-            <?php 
-            $dashboard = ($_SESSION['lawyer_role'] === 'admin') 
-                ? 'admin_dashboard.php' 
-                : 'lawyer_dashboard.php';
-            ?>
-            <a href="<?= $dashboard ?>">Dashboard</a>
-            <a href="tickets.php">All Tickets</a>
-            <a href="tickets.php?status=Pending">Pending</a>
-            <a href="tickets.php?status=For%20Revisions">For Revisions</a>
-            <a href="tickets.php?status=Completed">Completed</a>
-            <a href="tickets.php?status=Overdue">Overdue</a>
-            <hr>
-            <a href="/api/logout.php">Logout</a>
-
-        <?php endif; ?>
-    </nav>
+    <?php include __DIR__ . '/assets/partials/sidebar_common.php'; ?>
 </aside>
+<div id="sbBackdrop" aria-hidden="true"></div>
 
 
 <div id="sbBackdrop" aria-hidden="true"></div>
