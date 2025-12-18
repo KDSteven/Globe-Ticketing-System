@@ -218,6 +218,7 @@ while ($row = $vres->fetch_assoc()) {
     <title>Admin Dashboard – Data Agreements & Contracts</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="assets/css/notifications.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="/assets/img/favicon/favicon.ico">
     
@@ -253,28 +254,31 @@ if (!empty($_SESSION['lawyer_id'])) {
 
 
 <div class="date-filter-bar">
-    <form method="GET" id="filterForm">
 
-        <!-- PERIOD SELECTOR -->
-        <select name="period" id="periodSelect" onchange="document.getElementById('filterForm').submit()">
-            <option value="all" <?= ($period=='all'?'selected':'') ?>>All Time</option>
-            <option value="daily"    <?= ($period=='daily'?'selected':'') ?>>Daily</option>
-            <option value="monthly"  <?= ($period=='monthly'?'selected':'') ?>>Monthly</option>
-            <option value="quarterly"<?= ($period=='quarterly'?'selected':'') ?>>Quarterly</option>
-            <option value="yearly"   <?= ($period=='yearly'?'selected':'') ?>>Yearly</option>
-        </select>
+    <div class="filter-left">
+        <form method="GET" id="filterForm">
+            <select name="period" id="periodSelect"
+                    onchange="document.getElementById('filterForm').submit()">
+                <option value="all" <?= ($period=='all'?'selected':'') ?>>All Time</option>
+                <option value="daily" <?= ($period=='daily'?'selected':'') ?>>Daily</option>
+                <option value="monthly" <?= ($period=='monthly'?'selected':'') ?>>Monthly</option>
+                <option value="quarterly" <?= ($period=='quarterly'?'selected':'') ?>>Quarterly</option>
+                <option value="yearly" <?= ($period=='yearly'?'selected':'') ?>>Yearly</option>
+            </select>
 
-        <!-- DYNAMIC DATE INPUT -->
-        <span id="dateContainer">
-            <!-- injected automatically by JS -->
-        </span>
+            <span id="dateContainer"></span>
 
-        <button type="submit" class="btn primary">Apply</button>
-    </form>
-    <button type="button" class="btn secondary" id="addHolidayBtn">
-        + Add Holiday
+            <button type="submit" class="btn primary">Apply</button>
+        </form>
+    </div>
+
+    <button type="button" class="btn secondary add-holiday-btn" id="addHolidayBtn">
+        <i class="fa-solid fa-calendar-plus"></i>
+        Add Holiday
     </button>
+
 </div>
+
 
 <!-- SIDEBAR -->
 <aside id="offcanvas" aria-hidden="true">

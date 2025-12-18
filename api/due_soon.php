@@ -16,17 +16,33 @@ $lawyerId = (int)$_SESSION['lawyer_id'];
 
 // Using DATE only
 $sql = "
-  SELECT t.id, t.ticket_code, t.full_name, t.email, t.contract_type,
-         t.priority, t.due_date AS due_text, t.status
+  SELECT 
+    t.id,
+    t.ticket_code,
+    t.full_name,
+    t.email,
+    t.contract_type,
+    t.priority,
+    t.due_date AS due_text,
+    t.status,
+
+    l.name AS reviewer_name
+
   FROM tickets t
+
+  LEFT JOIN lawyers l
+    ON l.email = t.assigned_lawyer
+
   LEFT JOIN ticket_alert_ack a
     ON a.ticket_id = t.id
    AND a.lawyer_id = ?
    AND a.alert_type = 'pre_overdue_24h'
+
   WHERE t.status <> 'Completed'
     AND t.due_date IS NOT NULL
     AND DATEDIFF(t.due_date, CURDATE()) = 1
     AND a.ticket_id IS NULL
+
   ORDER BY t.due_date ASC
   LIMIT 50
 ";

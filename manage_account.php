@@ -19,6 +19,7 @@ $role = $_SESSION['lawyer_role'];
 <link rel="stylesheet" href="assets/css/admin.css">
 <link rel="stylesheet" href="assets/css/manage_account.css">
 <link rel="stylesheet" href="assets/css/toast.css">
+<link rel="stylesheet" href="assets/css/notifications.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
@@ -92,39 +93,25 @@ include __DIR__ . '/assets/partials/brandbar.php';
     </form>
 </section>
 
-  <!-- ===================== MFA / OKTA VERIFICATION ===================== -->
-  <section class="card account-section">
+  <!-- ===================== MFA (Okta-managed) ===================== -->
+<section class="card account-section">
     <h2><i class="fa-solid fa-shield-halved"></i> Multi-Factor Authentication</h2>
 
-    <p>We use <strong>Okta Verify</strong> for multi-factor authentication (MFA).</p>
+    <p>
+        Globe accounts use <strong>Okta Verify</strong> for identity authentication.
+        MFA is already <strong>enforced by Globe Identity Management</strong> and
+        cannot be enabled or disabled from this system.
+    </p>
 
-    <!-- Placeholder -->
-    <div id="mfaStatusBox" class="mfa-box inactive">
-      <i class="fa-solid fa-circle-xmark"></i>
-      MFA Not Enabled
+    <div class="mfa-box active">
+        <i class="fa-solid fa-circle-check"></i>
+        MFA Status: Enabled (Managed by Okta)
     </div>
 
-    <button class="btn primary" id="setupMfaBtn">
-      Enable Okta Verify
-    </button>
-
-    <button class="btn danger" id="disableMfaBtn" style="display:none;">
-      Disable Okta Verify
-    </button>
-
-    <p class="hint">Your administrator may require MFA depending on your role.</p>
-  </section>
-
-  <!-- ===================== CONNECTED DEVICES (UI Only) ===================== -->
-  <section class="card account-section">
-    <h2><i class="fa-solid fa-mobile-screen"></i> Devices</h2>
-
-    <p class="hint">This will show devices linked via Okta Verify once integration is enabled.</p>
-
-    <ul class="device-list" id="deviceList">
-      <li>No devices connected.</li>
-    </ul>
-  </section>
+    <p class="hint">
+        All authentication and device management are handled automatically through Globe's Okta platform.
+    </p>
+</section>
 
 </div>
 

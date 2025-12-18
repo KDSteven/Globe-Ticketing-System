@@ -1,0 +1,102 @@
+/* =========================================
+   NOTIFICATIONS (Brandbar)
+   ========================================= */
+
+.notif-wrapper {
+    position: relative;
+}
+
+/* Bell button */
+.notif-bell {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #ffffff;
+    position: relative;
+}
+
+/* Badge */
+.notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    background: #e53935;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 999px;
+    line-height: 1;
+}
+
+/* Dropdown container */
+.notif-dropdown {
+    position: absolute;
+    right: 0;
+    top: 42px;
+    width: 320px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    display: none;
+    z-index: 1000;
+}
+
+/* Header */
+.notif-header {
+    padding: 14px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2e3192;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+/* List container */
+.notif-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Empty state */
+.notif-empty {
+    padding: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* Individual notification item */
+.notif-item {
+    padding: 12px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+}
+
+.notif-item:last-child {
+    border-bottom: none;
+}
+
+.notif-item:hover {
+    background: #f1f5ff;
+}
+
+/* Title inside item */
+.notif-item-title {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+/* Meta / time */
+.notif-item-meta {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+/* Show dropdown (JS toggles this) */
+.notif-dropdown.show {
+    display: block;
+}

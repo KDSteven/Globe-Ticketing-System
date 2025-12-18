@@ -37,20 +37,36 @@
          return ts && Date.now() < Number(ts);
        }
 
-       function openModal(items) {
-        TBODY.innerHTML = items.map(it => `
-          <div class="due-item">
-              <span class="col">${esc(it.ticket_code)}</span>
-              <span class="col">${esc(it.full_name)}</span>
-              <span class="col">${esc(it.contract_type)}</span>
-              <span class="col">${esc(it.priority)}</span>
-              <span class="col">${esc(it.due_text)}</span>
-          </div>
-        `).join('');
-         MODAL.style.display = 'block';
-         
-       }
-       
+        function openModal(items) {
+          TBODY.innerHTML = `
+            <div class="ds-table">
+
+              <div class="ds-table-header">
+                <span>Ticket</span>
+                <span>Requestor</span>
+                <span>Contract Type</span>
+                <span>Reviewer</span>
+                <span>Due Date</span>
+              </div>
+
+              ${items.map(it => `
+                <div class="ds-table-row">
+                  <span class="ds-ticket-id">${esc(it.ticket_code)}</span>
+                  <span>${esc(it.full_name)}</span>
+                  <span class="ds-contract">${esc(it.contract_type)}</span>
+                  <span class="ds-reviewer">
+                    ${esc(it.reviewer_name || 'Unassigned')}
+                  </span>
+                  <span class="ds-due">${esc(it.due_text)}</span>
+                </div>
+              `).join('')}
+
+            </div>
+          `;
+
+          MODAL.style.display = 'block';
+        }
+  
        function closeModal() { MODAL.style.display = 'none'; }
 
        async function fetchDueSoon() {
