@@ -294,8 +294,7 @@ if (!empty($_SESSION['lawyer_id'])) {
         <a href="manage_account.php">My Account</a>
         <a href="manage_lawyers.php">Manage Lawyers</a>
         <a href="manage_routing.php">Routing Rules</a>
-        <a href="manage_holidays.php">Holidays</a>
-        <a href="settings.php">System Settings</a>
+        <a href="databackup.php">Data Backup</a>
         <hr>
         <a href="/api/logout.php">Logout</a>
     </nav>

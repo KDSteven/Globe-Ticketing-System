@@ -26,6 +26,7 @@ $dashboard = ($role === 'admin') ? 'admin_dashboard.php' : 'lawyer_dashboard.php
 
     <a href="manage_lawyers.php">Manage Lawyers</a>
     <a href="manage_routing.php">Routing Rules</a>
+    <a href="databackup.php">Data Backup</a>
     <!-- <a href="manage_holidays.php">Holidays</a>
     <a href="settings.php">System Settings</a> -->
 
