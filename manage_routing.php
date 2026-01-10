@@ -30,14 +30,18 @@ $lawyers = $conn->query("
    FETCH ROUTING RULES FROM DB
 --------------------------------------------------- */
 $rules = $conn->query("
-    SELECT r.id, r.ticket_type, r.active,
+    SELECT r.id,
+           r.ticket_type,
+           r.display_name,
+           r.active,
            r.assigned_lawyer,
-           r.cc_emails,   /* <-- add this */
+           r.cc_emails,
            l.name AS lawyer_name
     FROM routing_rules r
     JOIN lawyers l ON r.assigned_lawyer = l.id
     ORDER BY r.ticket_type ASC
 ")->fetch_all(MYSQLI_ASSOC);
+
 
 $success = $_GET['success'] ?? null;
 $error   = $_GET['error'] ?? null;
@@ -52,6 +56,7 @@ $error   = $_GET['error'] ?? null;
     <link rel="stylesheet" href="assets/css/manage_lawyers.css">
     <link rel="stylesheet" href="assets/css/toast.css">
     <link rel="stylesheet" href="assets/css/notifications.css">
+    <link rel="icon" type="image/x-icon" href="/assets/img/favicon/favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
 
@@ -107,21 +112,28 @@ include __DIR__ . '/assets/partials/brandbar.php';
             <tbody>
             <?php foreach ($rules as $row): ?>
             <tr>
-                <td><?= h($row['ticket_type']) ?></td>
+                <td><?= h(($row['display_name'] ?? '') ?: $row['ticket_type']) ?></td>
                 <td><?= h($row['lawyer_name']) ?></td>
-                <td><?= $row['active'] ? "Active" : "Disabled" ?></td>
+                <td>
+                    <?php if ($row['active']): ?>
+                        <span class="status-badge status-active">Active</span>
+                    <?php else: ?>
+                        <span class="status-badge status-disabled">Disabled</span>
+                    <?php endif; ?>
+                </td>
 
                 <td>
-                    <button class="btn small editRuleBtn"
-                        title="Edit"
-                        data-id="<?= $row['id'] ?>"
-                        data-type="<?= h($row['ticket_type']) ?>"
-                        data-lawyer="<?= $row['assigned_lawyer'] ?>"
-                        data-active="<?= $row['active'] ?>"
-                        data-cc="<?= h($row['cc_emails'] ?? '') ?>"
-                    >
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
+                <button class="btn small editRuleBtn"
+                    title="Edit"
+                    data-id="<?= (int)$row['id'] ?>"
+                    data-type="<?= h($row['ticket_type']) ?>"
+                    data-display="<?= h($row['display_name'] ?? '') ?>"
+                    data-lawyer="<?= (int)$row['assigned_lawyer'] ?>"
+                    data-active="<?= (int)$row['active'] ?>"
+                    data-cc="<?= h($row['cc_emails'] ?? '') ?>"
+                >
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
 
                     <button class="btn small danger deleteRuleBtn"
                             title="Delete"
@@ -226,6 +238,10 @@ include __DIR__ . '/assets/partials/brandbar.php';
                 <?php endforeach; ?>
             </select>
 
+            <label>Display Name (Admin label):</label>
+            <input type="text" name="display_name" id="editRuleDisplay" placeholder="e.g. NDA (Standard)">
+
+
             <label>Assign to Lawyer:</label>
             <select name="assigned_lawyer" id="editRuleLawyer" required>
                 <?php foreach ($lawyers as $l): ?>
@@ -248,8 +264,7 @@ include __DIR__ . '/assets/partials/brandbar.php';
                 <option value="0">Disabled</option>
             </select>
 
-            <div class="modal-actions">
-                <button class="btn primary">Update Rule</button>
+                <button class="btn primary">Save</button>
                 <button type="button" id="closeEditRuleModal" class="btn secondary">Cancel</button>
             </div>
         </form>
@@ -294,6 +309,7 @@ document.getElementById("closeAddRuleModal").onclick = () =>
 document.querySelectorAll(".editRuleBtn").forEach(btn => {
     btn.onclick = () => {
         document.getElementById("editRuleId").value = btn.dataset.id;
+        document.getElementById("editRuleDisplay").value = btn.dataset.display || "";
         document.getElementById("editRuleType").value = btn.dataset.type;
         document.getElementById("editRuleLawyer").value = btn.dataset.lawyer;
         document.getElementById("editRuleActive").value = btn.dataset.active;

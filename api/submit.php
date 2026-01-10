@@ -234,7 +234,11 @@ try {
 
     $mail = new PHPMailer(true);
     $mail->isSMTP();
-    $mail->Host       = $mailCfg['host'];
+    $mail->SMTPDebug  = 2;               // TEMP: show connection steps
+    $mail->Debugoutput = 'html';         // show in browser
+    $mail->Timeout = 10;                 // fail fast
+    $mail->SMTPKeepAlive = false;
+    $mail->Host = gethostbyname($mailCfg['host']); // force IPv4
     $mail->Port       = $mailCfg['port'];
     $mail->SMTPSecure = $mailCfg['encryption'];
     $mail->SMTPAuth   = true;

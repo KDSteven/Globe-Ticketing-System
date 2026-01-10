@@ -16,49 +16,33 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 function h($s){ return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 
 // ---------------------------
-// Flash toast helpers (PRG)
-// ---------------------------
-function set_flash_toast(string $type, string $text): void {
-    $_SESSION['flash_toast'] = ['type' => $type, 'text' => $text];
-}
-function pop_flash_toast(): ?array {
-    if (empty($_SESSION['flash_toast'])) return null;
-    $t = $_SESSION['flash_toast'];
-    unset($_SESSION['flash_toast']);
-    return $t;
-}
-
-// ---------------------------
 // Handle actions
 // ---------------------------
 $action = $_GET['action'] ?? null;
 
-// 1) Download backup (this response becomes a FILE, so no toast can run here)
+// 1) Download backup (response is a FILE; cannot show toast on that response)
 if ($action === 'backup_now') {
     $result = create_backup_sql($conn);
 
     if ($result['ok']) {
-        // update meta
         $meta = read_meta();
         $meta['last_file'] = basename($result['file']);
         $meta['last_time'] = date('c');
         write_meta($meta);
 
-        // download immediately (this exits)
         download_file($result['file'], basename($result['file']));
     } else {
-        // Can't toast here because it's a download request; just show a message if opened in tab
-        http_response_code(500);
-        echo "Backup failed: " . h($result['error'] ?? 'Unknown error');
+        // Redirect back with error toast (this works if opened in same tab)
+        header('Location: databackup.php?error=' . urlencode('Backup failed: ' . ($result['error'] ?? 'Unknown error')));
         exit;
     }
 }
 
-// 2) Restore database (POST -> set flash -> redirect -> toast on GET)
+// 2) Restore database (POST -> redirect -> showToast.js handles ok/error)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore'])) {
+
     if (!isset($_FILES['sql_file']) || $_FILES['sql_file']['error'] !== UPLOAD_ERR_OK) {
-        set_flash_toast('error', 'Please upload a valid .sql file.');
-        header('Location: databackup.php');
+        header('Location: databackup.php?error=' . urlencode('Please upload a valid .sql file.'));
         exit;
     }
 
@@ -66,19 +50,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore'])) {
     $name = $_FILES['sql_file']['name'];
 
     if (strtolower(pathinfo($name, PATHINFO_EXTENSION)) !== 'sql') {
-        set_flash_toast('error', 'Only .sql files are allowed.');
-        header('Location: databackup.php');
+        header('Location: databackup.php?error=' . urlencode('Only .sql files are allowed.'));
         exit;
     }
 
     $restore = run_sql_file($conn, $tmp);
-    if ($restore['ok']) {
-        set_flash_toast('success', 'Database restored successfully.');
-    } else {
-        set_flash_toast('error', $restore['error'] ?? 'Restore failed.');
-    }
 
-    header('Location: databackup.php');
+    if ($restore['ok']) {
+        header('Location: databackup.php?ok=' . urlencode('Database restored successfully.'));
+    } else {
+        header('Location: databackup.php?error=' . urlencode($restore['error'] ?? 'Restore failed.'));
+    }
     exit;
 }
 
@@ -86,20 +68,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore'])) {
 // Auto-backup check (runs on normal GET page load)
 // ---------------------------
 $auto = auto_backup_if_needed($conn);
-if (!empty($auto['did_backup']) && !empty($auto['file'])) {
-    // Optional: toast once when auto-backup happens
-    // (If you don’t want this, remove this block)
-    $autoText = "Auto-backup created at milestone {$auto['milestone']} tickets. File: " . basename($auto['file']);
-    set_flash_toast('success', $autoText);
+
+// OPTIONAL: show toast when auto-backup occurs
+// This MUST be done via redirect so showToast.js can read the query string.
+if (!empty($auto['did_backup']) && !empty($auto['file']) && empty($_GET['ok']) && empty($_GET['error'])) {
+    $msg = "Auto-backup created at milestone {$auto['milestone']} tickets. File: " . basename($auto['file']);
+    header('Location: databackup.php?ok=' . urlencode($msg));
+    exit;
 }
 
 // ---------------------------
 // Page data
 // ---------------------------
-$flash = pop_flash_toast();
-
-$meta            = read_meta();
-$ticketCount     = get_ticket_count($conn);
+$meta             = read_meta();
+$ticketCount      = get_ticket_count($conn);
 $currentMilestone = intdiv($ticketCount, BACKUP_EVERY) * BACKUP_EVERY;
 ?>
 <!DOCTYPE html>
@@ -107,16 +89,15 @@ $currentMilestone = intdiv($ticketCount, BACKUP_EVERY) * BACKUP_EVERY;
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data Backup</title>
+  <title>Data Backup – Data Agreements & Contracts</title>
 
-  <!-- Use absolute paths consistently (like your working pages) -->
   <link rel="stylesheet" href="/assets/css/admin.css">
   <link rel="stylesheet" href="/assets/css/notifications.css">
   <link rel="stylesheet" href="/assets/css/toast.css">
+  <link rel="icon" type="image/x-icon" href="/assets/img/favicon/favicon.ico">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 
   <style>
-    /* Page-only styling (doesn't touch sidebar/brandbar) */
     .backup-page { padding: 20px; }
     .backup-page .card{
       background:#fff;
@@ -144,7 +125,6 @@ $currentMilestone = intdiv($ticketCount, BACKUP_EVERY) * BACKUP_EVERY;
 <body>
 
 <?php
-// same pattern as admin_dashboard.php
 $brand = [
   'showMenuToggle' => true,
   'showNotif'      => true,
@@ -152,13 +132,11 @@ $brand = [
 include __DIR__ . '/assets/partials/brandbar.php';
 ?>
 
-<!-- SIDEBAR (match admin_dashboard.php exactly) -->
 <aside id="offcanvas" aria-hidden="true">
   <?php require_once __DIR__ . '/assets/partials/sidebar_common.php'; ?>
 </aside>
 <div id="sbBackdrop" aria-hidden="true"></div>
 
-<!-- MAIN CONTENT (match admin_dashboard.php wrapper) -->
 <main class="container-fluid page" id="mainContent">
   <div class="backup-page">
 
@@ -173,25 +151,31 @@ include __DIR__ . '/assets/partials/brandbar.php';
         <p><b>Total tickets:</b> <?php echo (int)$ticketCount; ?></p>
         <p><b>Current milestone:</b> <?php echo (int)$currentMilestone; ?></p>
         <p><b>Last backup file:</b> <?php echo $meta['last_file'] ? h($meta['last_file']) : 'None'; ?></p>
-        <p><b>Last backup time:</b> <?php echo $meta['last_time'] ? h($meta['last_time']) : 'None'; ?></p>
+        <p><b>Last backup time:</b> 
+        <?php
+        if ($meta['last_time']) {
+            echo h(date('M j, Y \a\t g:i A', strtotime($meta['last_time'])));
+        } else {
+            echo 'None';
+        }
+        ?>
+
       </div>
 
       <div class="col card">
         <h3>Download Backup Now</h3>
         <p class="hint">Creates a new backup and downloads it immediately.</p>
 
-        <!-- IMPORTANT:
-             open in NEW TAB so current page can show toast (download response exits) -->
-        <a
-          class="btn btn-primary"
-          id="backupNowBtn"
-          href="databackup.php?action=backup_now"
-          target="_blank"
-          rel="noopener"
-        >Create & Download Backup</a>
+        <!-- NOTE: this triggers download; showToast.js cannot show toast for that response -->
+        <a class="btn btn-primary"
+           href="databackup.php?action=backup_now"
+           target="_blank"
+           rel="noopener">
+          Create & Download Backup
+        </a>
 
         <p class="hint" style="margin-top:10px;">
-          (Uses PHP export for reliability.)
+          (Download opens in a new tab.)
         </p>
       </div>
 
@@ -203,7 +187,7 @@ include __DIR__ . '/assets/partials/brandbar.php';
         <form method="POST" enctype="multipart/form-data">
           <input type="file" name="sql_file" accept=".sql" required />
           <br><br>
-          <button type="submit" name="restore" class="btn btn-danger">Restore from .sql</button>
+          <button type="submit" name="restore" class="btn btn-danger">Restore Database</button>
         </form>
       </div>
     </div>
@@ -217,47 +201,6 @@ include __DIR__ . '/assets/partials/brandbar.php';
 <script src="/assets/js/toast.js"></script>
 <script src="/assets/js/showToast.js"></script>
 <script src="/assets/js/functions.js"></script>
-
-<script>
-  // Flash toast from PHP (restore / auto-backup)
-  const flash = <?= json_encode($flash ?? null) ?>;
-
-  function fireToast(text, type) {
-    // Prefer your project toast function(s)
-    if (typeof window.showToast === "function") return window.showToast(text, type);
-    if (typeof window.toast === "function") return window.toast(text, type);
-
-    // Fallback: basic toast if no function is found
-    const box = document.createElement("div");
-    box.textContent = text;
-    box.style.position = "fixed";
-    box.style.right = "16px";
-    box.style.bottom = "16px";
-    box.style.padding = "12px 14px";
-    box.style.borderRadius = "10px";
-    box.style.background = (type === "error") ? "#b91c1c" : "#2b2f8f";
-    box.style.color = "#fff";
-    box.style.zIndex = 99999;
-    box.style.boxShadow = "0 8px 20px rgba(0,0,0,.2)";
-    document.body.appendChild(box);
-    setTimeout(() => box.remove(), 2500);
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    // Show toast after restore / auto-backup (flash)
-    if (flash && flash.text) {
-      fireToast(flash.text, flash.type || "success");
-    }
-
-    // Show toast immediately when clicking download (page stays open because target=_blank)
-    const btn = document.getElementById("backupNowBtn");
-    if (btn) {
-      btn.addEventListener("click", () => {
-        fireToast("Generating backup… your download will start in a new tab.", "success");
-      });
-    }
-  });
-</script>
 
 </body>
 </html>

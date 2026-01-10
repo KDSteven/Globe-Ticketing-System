@@ -224,6 +224,169 @@ input[type="file"]::-webkit-file-upload-button:hover{ background: var(--brand-70
   display:block; width:100%; max-width:520px; margin-top:12px;
   padding:10px 12px; border:1px solid var(--border); border-radius:6px; font-size:15px;
 }
+/* Status badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Active */
+.status-active {
+    background: #dcfce7;       /* light green */
+    color: #166534;            /* dark green */
+    border: 1px solid #86efac;
+}
+
+/* Disabled */
+.status-disabled {
+    background: #fee2e2;       /* light red */
+    color: #7f1d1d;            /* dark red */
+    border: 1px solid #fecaca;
+}
+.icon-btn {
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.icon-btn i {
+  font-size: 15px;
+}
+
+/* No remarks yet */
+.icon-btn.no-remarks {
+  color: #9ca3af; /* gray */
+}
+
+.icon-btn.no-remarks:hover {
+  color: #374151;
+  background: #f3f4f6;
+}
+
+/* Has remarks */
+.icon-btn.has-remarks {
+  color: #2e3192; /* your brand blue */
+}
+
+.icon-btn.has-remarks:hover {
+  background: rgba(46, 49, 146, 0.1);
+}
+
+/* Optional: subtle border on hover */
+.icon-btn:hover {
+  border-color: rgba(0,0,0,.08);
+}
+
+.contract-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 0;
+  margin: 18px 0;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  overflow: hidden;
+  max-width: 520px; /* adjust if you want wider */
+}
+
+.contract-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  color: #fff;
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+}
+
+.contract-card-title {
+  font-weight: 700;
+  font-size: 16px;
+  opacity: 0.95;
+}
+
+.contract-card-rate {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-top: 6px;
+}
+
+.contract-card-sub {
+  font-size: 13px;
+  opacity: 0.9;
+  margin-top: 4px;
+}
+
+.contract-card-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+}
+
+.contract-card-table {
+  padding: 12px 18px 16px;
+}
+
+.contract-row {
+  display: grid;
+  grid-template-columns: 1fr 70px 110px;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 14px;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.contract-row:last-child {
+  border-bottom: none;
+}
+
+.contract-head {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.contract-empty {
+  padding: 12px 0;
+  font-style: italic;
+  color: #6b7280;
+}
+/* ===== Dashboard Option A layout (safe) ===== */
+.dash-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:18px;
+  margin-top:16px;
+  align-items:start;
+}
+
+.dash-left{ grid-column:1; }
+.dash-right{ grid-column:2; }
+.dash-wide{ grid-column:1 / -1; }
+
+@media (max-width: 1100px){
+  .dash-grid{ grid-template-columns: 1fr; }
+  .dash-left, .dash-right, .dash-wide{ grid-column: 1 / -1; }
+}
+
+/* ensure contract card fills column */
+.contract-card{
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+}
 
 /* ==================== KPI Cards (like screenshot) ==================== */
 .kpi-grid {
@@ -238,6 +401,13 @@ input[type="file"]::-webkit-file-upload-button:hover{ background: var(--brand-70
     min-width: 0;          /* shrink if needed */
 }
 
+.empty-state{
+  font-style: italic;
+  color: #6b7280;
+  text-align: center;
+  padding: 60px 12px;
+  margin: 0;
+}
 
 @media (max-width: 900px){
   .kpi-grid{
@@ -1031,3 +1201,4 @@ table.tickets{ width:100%; border-collapse:separate; border-spacing:0; }
     padding: 8px 12px;
     margin: 5px 0 10px 0;
 }
+

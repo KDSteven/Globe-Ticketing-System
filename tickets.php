@@ -104,11 +104,18 @@ include __DIR__ . '/assets/partials/brandbar.php';
         <a class="btn ghost" href="tickets.php">Clear</a>
       <?php endif; ?>
     </form>
+      <?php
+      $from = ($total === 0) ? 0 : ($offset + 1);
+      $to   = min($offset + $perPage, $total);
+      ?>
 
-    <div class="muted">
-      Showing <?= ($total===0?0:$offset+1) ?>–<?= min($offset+$perPage,$total) ?> of <?= $total ?>
-    </div>
+      <div class="muted">
+        Showing <?= $from ?>–<?= $to ?> of <?= $total ?>
+        &nbsp;•&nbsp;
+        Page <?= (int)$page ?> of <?= (int)$totalPages ?>
+      </div>
   </div>
+  
 
   <!-- Ticket Table -->
   <section class="table-wrap">
@@ -119,7 +126,7 @@ include __DIR__ . '/assets/partials/brandbar.php';
           <th>TIMESTAMP</th>
           <th>REQUESTOR</th>
           <th>EMAIL</th>
-          <th>PRIORITY</th>
+          <!-- <th>PRIORITY</th> -->
           <th>DUE DATE</th>
           <th>REVIEWER</th>
           <th>CONTRACT TYPE</th>
@@ -137,7 +144,7 @@ include __DIR__ . '/assets/partials/brandbar.php';
           <td><?= h(date('M d, Y', strtotime($r['created_at']))) ?></td>
           <td><?= h($r['full_name']) ?></td>
           <td><a href="mailto:<?= h($r['email']) ?>"><?= h($r['email']) ?></a></td>
-          <td><?= h($r['priority']) ?></td>
+          <!-- <td><?= h($r['priority']) ?></td> -->
           <td><?= h(date('M d, Y', strtotime($r['due_date']))) ?></td>
           <td><?= h($reviewerName) ?></td>
           <td><?= h($r['contract_type']) ?></td>
@@ -154,17 +161,50 @@ include __DIR__ . '/assets/partials/brandbar.php';
             </form>
           </td>
 
-      <td>
-          <form action="api/update_remarks.php" method="post" style="display:flex;flex-direction:column;gap:4px;">
-              <input type="hidden" name="id" value="<?= (int)$r['id'] ?>">
-              <textarea name="remarks" rows="1" style="width:100%;"><?= h($r['remarks'] ?? '') ?></textarea>
-              <button class="btn-small" type="submit">Save</button>
-          </form>
-      </td>
+        <td style="text-align:center;">
+          <?php $hasRemarks = trim((string)($r['remarks'] ?? '')) !== ''; ?>
+
+          <button
+            type="button"
+            class="icon-btn openRemarksModal <?= $hasRemarks ? 'has-remarks' : 'no-remarks' ?>"
+            title="<?= $hasRemarks ? 'View / Edit Remarks' : 'Add Remarks' ?>"
+            data-id="<?= (int)$r['id'] ?>"
+            data-ticket="<?= h($r['ticket_code']) ?>"
+            data-remarks="<?= h($r['remarks'] ?? '') ?>"
+          >
+            <i class="fa-solid fa-pen-to-square"></i>
+          </button>
+        </td>
+
         </tr>
       <?php endwhile; ?>
       </tbody>
     </table>
+
+<!-- REMARKS MODAL -->
+<div id="remarksModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box" style="max-width:520px;">
+    <h2 id="remarksModalTitle">Remarks</h2>
+
+    <form method="post" action="api/update_remarks.php" id="remarksForm">
+      <input type="hidden" name="id" id="remarksTicketId">
+
+      <label for="remarksText" style="display:block;margin-top:10px;">Remarks:</label>
+      <textarea
+        id="remarksText"
+        name="remarks"
+        rows="6"
+        style="width:100%; resize:vertical;"
+        placeholder="Type remarks here..."
+      ></textarea>
+
+      <div class="modal-actions" style="margin-top:12px;">
+        <button type="submit" class="btn primary">Save</button>
+        <button type="button" class="btn secondary" id="closeRemarksModal">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
 
     <!-- Pagination -->
     <?= build_pagination($page, $totalPages, $q, $status) ?>
@@ -176,5 +216,53 @@ include __DIR__ . '/assets/partials/brandbar.php';
 </main>
 
 <script src="/assets/js/sidebar.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('remarksModal');
+  if (!modal) return;
+
+  const titleEl = document.getElementById('remarksModalTitle');
+  const idEl = document.getElementById('remarksTicketId');
+  const textEl = document.getElementById('remarksText');
+  const closeBtn = document.getElementById('closeRemarksModal');
+
+  function openModal({ id, ticket, remarks }) {
+    idEl.value = id;
+    textEl.value = remarks || '';
+    titleEl.textContent = `Remarks — ${ticket}`;
+    modal.style.display = 'flex';
+    setTimeout(() => textEl.focus(), 50);
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    idEl.value = '';
+    textEl.value = '';
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.openRemarksModal');
+    if (!btn) return;
+
+    openModal({
+      id: btn.dataset.id,
+      ticket: btn.dataset.ticket,
+      remarks: btn.dataset.remarks
+    });
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+
+  // Click outside closes
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // ESC closes
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.style.display !== 'none') closeModal();
+  });
+});
+</script>
 </body>
 </html>

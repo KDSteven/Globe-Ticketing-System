@@ -92,6 +92,36 @@ $revisions = fetchCount($conn, $whereSQL, "status='For Revisions'");
 $pending   = fetchCount($conn, $whereSQL, "status='Pending'");
 
 /* ------------------------------------------------------
+   CONTRACT REVIEW RATE (Overall + Breakdown)
+------------------------------------------------------ */
+
+// Overall
+$overallRow = $conn->query("
+    SELECT 
+        COUNT(*) AS total,
+        SUM(status='Completed') AS reviewed
+    FROM tickets
+    $whereSQL
+")->fetch_assoc();
+
+$overallTotal    = (int)($overallRow['total'] ?? 0);
+$overallReviewed = (int)($overallRow['reviewed'] ?? 0);
+$overallRate     = $overallTotal > 0 ? round(($overallReviewed / $overallTotal) * 100, 2) : 0;
+
+// Breakdown per contract_type
+$contractBreakdown = $conn->query("
+    SELECT 
+        contract_type,
+        COUNT(*) AS total,
+        SUM(status='Completed') AS reviewed
+    FROM tickets
+    $whereSQL
+    GROUP BY contract_type
+    ORDER BY contract_type ASC
+")->fetch_all(MYSQLI_ASSOC);
+
+
+/* ------------------------------------------------------
    REVIEWER WORKLOAD
 ------------------------------------------------------ */
 $reviewSQL = "
@@ -208,6 +238,11 @@ while ($row = $vres->fetch_assoc()) {
     $volumeCounts[] = (int)$row['total'];
 }
 
+// After collecting reviewer workload + volume arrays
+$hasReviewerData = !empty($reviewers) && array_sum($ticketCount) > 0;
+$hasVolumeData   = !empty($volumeLabels) && array_sum($volumeCounts) > 0;
+
+
 ?>
 
 <!doctype html>
@@ -323,7 +358,7 @@ if (!empty($_SESSION['lawyer_id'])) {
 
         <div class="kpi-card kpi-gray">
             <div class="kpi-header">
-                <span class="kpi-label">Completed (Late)</span>
+                <span class="kpi-label">Past SLA</span>
                 <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
             </div>
             <div class="kpi-value"><?= $completedLate ?></div>
@@ -355,37 +390,99 @@ if (!empty($_SESSION['lawyer_id'])) {
 
     </section>
 
+   <!-- ===== Dashboard Main Grid (Option A) ===== -->
+<section class="dash-grid">
 
-<div class="chart-grid">
-    <div class="chart-card">
-        <h3>Reviewer Workload</h3>
-        <ul class="reviewer-list">
-            <?php
-            $maxCount = !empty($ticketCount) ? max($ticketCount) : 1; // Avoid division by zero
-            foreach ($reviewers as $index => $reviewer) {
-                $count = $ticketCount[$index];
-                $percentage = ($count / $maxCount) * 100;
-                echo "<li class='reviewer-item'>
-                        <div class='reviewer-info'>
-                            <span class='reviewer-name'>" . h($reviewer) . "</span>
-                            <span class='reviewer-count'>$count tickets</span>
-                        </div>
-                        <div class='countbar-container'>
-                            <div class='countbar' style='width: {$percentage}%'></div>
-                        </div>
-                    </li>";
-            }
-            ?>
-        </ul>
-    </div>
-
-    <div class="chart-card">
-        <h3>Monthly Ticket Volume</h3>
-        <div class="chart-container">
-            <canvas id="ticketVolumeChart"></canvas>
+  <!-- LEFT: Contract Review -->
+  <div class="dash-left">
+    <section class="contract-card">
+      <div class="contract-card-top">
+        <div>
+          <div class="contract-card-title">Contract Review</div>
+          <div class="contract-card-rate"><?= number_format($overallRate, 2) ?>%</div>
+          <div class="contract-card-sub">Overall Contract Review Rate</div>
         </div>
+
+        <div class="contract-card-icon">
+          <i class="fa-regular fa-file-lines"></i>
+        </div>
+      </div>
+
+      <div class="contract-card-table">
+        <div class="contract-row contract-head">
+          <span>Contract Type</span>
+          <span>Total</span>
+          <span>% Reviewed</span>
+        </div>
+
+        <?php if (empty($contractBreakdown)): ?>
+          <div class="contract-empty">No data for this date.</div>
+        <?php else: ?>
+          <?php foreach ($contractBreakdown as $r): 
+              $t = (int)$r['total'];
+              $rev = (int)$r['reviewed'];
+              $rate = $t > 0 ? round(($rev / $t) * 100, 2) : 0;
+          ?>
+            <div class="contract-row">
+              <span><?= h($r['contract_type']) ?></span>
+              <span><?= $t ?></span>
+              <span><?= number_format($rate, 2) ?>%</span>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
+    </section>
+  </div>
+
+  <!-- RIGHT: Reviewer Workload -->
+  <div class="dash-right">
+    <div class="chart-card">
+      <h3>Reviewer Workload</h3>
+
+      <?php if (!$hasReviewerData): ?>
+          <p class="empty-state">No data for this date.</p>
+      <?php else: ?>
+          <ul class="reviewer-list">
+              <?php
+              $maxCount = !empty($ticketCount) ? max($ticketCount) : 1;
+              foreach ($reviewers as $index => $reviewer) {
+                  $count = $ticketCount[$index];
+                  $percentage = ($count / $maxCount) * 100;
+
+                  echo "<li class='reviewer-item'>
+                          <div class='reviewer-info'>
+                              <span class='reviewer-name'>" . h($reviewer) . "</span>
+                              <span class='reviewer-count'>" . (int)$count . " tickets</span>
+                          </div>
+                          <div class='countbar-container'>
+                              <div class='countbar' style='width: {$percentage}%'></div>
+                          </div>
+                      </li>";
+              }
+              ?>
+          </ul>
+      <?php endif; ?>
     </div>
-</div>
+  </div>
+
+  <!-- FULL WIDTH: Monthly Ticket Volume -->
+  <div class="dash-wide">
+    <div class="chart-card">
+      <h3>Monthly Ticket Volume</h3>
+
+      <?php if (!$hasVolumeData): ?>
+          <p class="empty-state">No data for this date.</p>
+      <?php else: ?>
+          <div class="chart-container">
+              <canvas id="ticketVolumeChart"></canvas>
+          </div>
+      <?php endif; ?>
+    </div>
+  </div>
+
+</section>
+
+
 
 <!-- DUE SOON MODAL -->
 <div id="dueSoonModal" class="ds-modal">
@@ -473,7 +570,11 @@ if (!empty($_SESSION['lawyer_id'])) {
     const reviewerData   = <?= json_encode($ticketCount) ?>;
 
 
-    loadTicketVolumeChart(window.volumeLabels, window.volumeCounts);
+ if (<?= $hasVolumeData ? 'true' : 'false' ?>) {
+  loadTicketVolumeChart(window.volumeLabels, window.volumeCounts);
+}
+
+
 </script>
 
 </body>
