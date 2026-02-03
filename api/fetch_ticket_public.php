@@ -39,6 +39,10 @@ if ($ticket_code === '') {
 // customer, vendor, pd_nature, pd_other_text, clauses, doc_link, status
 $sql = "
   SELECT
+    t.created_at,
+    t.due_date,
+    t.priority,
+
     t.full_name,
     t.email,
     t.grp,
@@ -76,6 +80,9 @@ $stmt->close();
 echo json_encode([
   'success' => true,
   'data' => [
+    'created_at' => (string)$row['created_at'],
+    'due_date'   => (string)$row['due_date'],
+    'priority'   => (string)$row['priority'],
     'full_name'       => (string)$row['full_name'],
     'email'           => (string)$row['email'],
     'group'           => (string)$row['grp'],
@@ -93,3 +100,4 @@ echo json_encode([
     'doc_link'        => (string)$row['doc_link'],
   ],
 ]);
+

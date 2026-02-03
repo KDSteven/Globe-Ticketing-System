@@ -43,6 +43,11 @@ $sql = "
   SELECT
     t.ticket_code       AS ticket_code,
     t.id                AS id,
+    t.created_at        AS created_at,
+    t.due_date          AS due_date,
+    t.completed_at      AS completed_at,
+    t.priority          AS priority,
+
     t.full_name         AS full_name,
     t.email             AS email,
     t.grp               AS grp,
@@ -63,6 +68,7 @@ $sql = "
   WHERE t.ticket_code = ?
   LIMIT 1
 ";
+
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
@@ -94,9 +100,15 @@ if (!($role === 'admin' || (int)$row['id'] === $user_id)) {
 echo json_encode([
   'success' => true,
   'data' => [
+    'ticket_code'     => $row['ticket_code'],
+    'created_at'      => $row['created_at'],   // DATETIME
+    'due_date'        => $row['due_date'],     // DATE (per your insert)
+    'completed_at'    => $row['completed_at'],
+    'priority'        => $row['priority'],
+
     'full_name'       => $row['full_name'],
     'email'           => $row['email'],
-    'group'           => $row['grp'], // mapped
+    'group'           => $row['grp'],
     'tribe'           => $row['tribe'],
     'assigned_lawyer' => $row['assigned_lawyer'],
     'cc_emails'       => $row['cc_emails'],
@@ -112,3 +124,4 @@ echo json_encode([
     'status'          => $row['status'],
   ]
 ]);
+

@@ -9,6 +9,61 @@ function redirect_err($msg) {
     header('Location: /customer_portal?error=' . urlencode($msg)); exit;
 }
 
+// ------------------------------------------------------------
+// 0. Business Hours Rules: 8AM–4PM, after 4PM => next business day 8AM
+// ------------------------------------------------------------
+function isWeekend(DateTime $d): bool {
+    return in_array((int)$d->format('N'), [6, 7], true); // 6=Sat,7=Sun
+}
+
+function nextBusinessDayAt8(DateTime $date, mysqli $conn): DateTime {
+    $d = clone $date;
+    $d->setTime(8, 0, 0);
+    do {
+        $d->modify('+1 day');
+        $d->setTime(8, 0, 0);
+    } while (isWeekend($d) || isPhilippineHoliday($d, $conn));
+    return $d;
+}
+
+/**
+ * Returns the "effective" createdAt based on business hours:
+ * - If weekend/holiday: move to next business day 8:00 AM
+ * - If after 4:00 PM: move to next business day 8:00 AM
+ * - If before 8:00 AM: move to same day 8:00 AM (recommended)
+ * - Else: keep same timestamp
+ */
+function applyBusinessHours(DateTime $createdAt, mysqli $conn): DateTime {
+    $d = clone $createdAt;
+
+    // If not a business day, push forward to next business day 8AM
+    if (isWeekend($d) || isPhilippineHoliday($d, $conn)) {
+        // move to next business day 8AM
+        while (isWeekend($d) || isPhilippineHoliday($d, $conn)) {
+            $d->modify('+1 day');
+        }
+        $d->setTime(8, 0, 0);
+        return $d;
+    }
+
+    $t = $d->format('H:i:s');
+
+    // After 4PM => next business day 8AM
+    if ($t > '16:00:00') {
+        return nextBusinessDayAt8($d, $conn);
+    }
+
+    // Before 8AM => same day 8AM (optional but usually correct)
+    if ($t < '08:00:00') {
+        $d->setTime(8, 0, 0);
+        return $d;
+    }
+
+    return $d;
+}
+
+
+
 // Basic validation
 $required = ['full_name','email','group','summary','contract_type','customer','vendor','pd_nature'];
 foreach ($required as $key) {
@@ -42,6 +97,7 @@ $daysToAdd = 5; // default
 // }
 
 $createdAt = new DateTime('now', new DateTimeZone('Asia/Manila'));
+$createdAt = applyBusinessHours($createdAt, $conn); // enforce 8AM-4PM rule
 
 
 // ------------------------------------------------------------
@@ -234,7 +290,7 @@ try {
 
     $mail = new PHPMailer(true);
     $mail->isSMTP();
-    $mail->SMTPDebug  = 2;               // TEMP: show connection steps
+    $mail->SMTPDebug  = 0;               // TEMP: show connection steps
     $mail->Debugoutput = 'html';         // show in browser
     $mail->Timeout = 10;                 // fail fast
     $mail->SMTPKeepAlive = false;
