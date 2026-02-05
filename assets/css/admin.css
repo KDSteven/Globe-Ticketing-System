@@ -515,6 +515,11 @@ input[type="file"]::-webkit-file-upload-button:hover{ background: var(--brand-70
 .dot-blue {
     background: #1fb6ff; /* matches your KPI blue or pick another */
 }
+.dot-black { background: #444; }
+.row-closed {
+  background: #f4f4f4;
+}
+
 
 
 /* ==================== Table ==================== */

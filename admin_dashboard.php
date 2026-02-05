@@ -112,7 +112,7 @@ $overallRow = $conn->query("
 
 $overallTotal    = (int)($overallRow['total'] ?? 0);
 $overallReviewed = (int)($overallRow['reviewed'] ?? 0);
-$overallRate     = $overallTotal > 0 ? round(($overallReviewed / $overallTotal) * 100, 2) : 0;
+$overallRate     = $overallTotal > 0 ? round(($overallReviewed / $overallTotal) * 100, 2) : 0; //Do not add Past SLA in the rate
 
 // Breakdown per contract_type
 $contractBreakdown = $conn->query("

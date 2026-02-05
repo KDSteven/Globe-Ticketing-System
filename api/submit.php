@@ -195,22 +195,30 @@ $status    = 'Pending';                                                        /
 
 
 // Insert ticket
+// SLA init values
+$sla_state = 'running';
+$sla_last_started_at = $createdTS; // use business-hours adjusted created time
+$sla_active_seconds = 0;
+
+// Insert ticket
 $stmt = $conn->prepare("
   INSERT INTO tickets (
     ticket_code, full_name, email, grp, tribe,
     assigned_lawyer, cc_emails, summary, contract_type, contract_other,
     customer, vendor, pd_nature, pd_other_text, clauses, doc_link,
-    created_at, priority, due_date, status
+    created_at, priority, due_date, status,
+    sla_state, sla_last_started_at, sla_active_seconds, sla_paused_at, waiting_started_at
   )
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)
 ");
 
 $stmt->bind_param(
-  "ssssssssssssssssssss",  // 20 placeholders
+  "ssssssssssssssssssssssi",  // 24 strings + 1 int at the end
   $ticket_code, $full_name, $email, $group, $tribe,
   $assigned_lawyer, $cc_emails, $summary, $contract_type, $contract_other,
   $customer, $vendor, $pd_nature, $pd_other_text, $clauses, $doc_link,
-  $createdTS, $priority, $dueDate, $status
+  $createdTS, $priority, $dueDate, $status,
+  $sla_state, $sla_last_started_at, $sla_active_seconds
 );
 
 if (!$stmt->execute()) {

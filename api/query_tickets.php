@@ -6,7 +6,7 @@ $page    = max(1, (int)($_GET['page'] ?? 1));
 $perPage = 10;
 
 // --- Status filter ---
-$allowedStatuses = ['', 'Pending', 'For Revisions', 'Completed', 'Overdue'];
+$allowedStatuses = ['', 'Pending', 'For Revisions', 'Completed', 'Closed - No Response', 'Overdue'];
 $status = $_GET['status'] ?? '';
 if (!in_array($status, $allowedStatuses, true)) {
     $status = '';
@@ -33,7 +33,7 @@ if ($q !== '') {
 
 if ($status !== '') {
     if ($status === 'Overdue') {
-        $conditions[] = "(t.due_date < CURDATE() AND t.status <> 'Completed')";
+        $conditions[] = "(t.due_date < CURDATE() AND t.status NOT IN ('Completed','Closed - No Response'))";
     } else {
         $conditions[] = "t.status = ?";
         $params[] = $status;
@@ -48,7 +48,7 @@ $usePrepared = ($types !== '');
 $countSql = "
 SELECT COUNT(*) c
 FROM tickets t
-LEFT JOIN lawyers l ON l.id = t.assigned_lawyer
+LEFT JOIN lawyers l ON l.email = t.assigned_lawyer
 WHERE $where
 ";
 
