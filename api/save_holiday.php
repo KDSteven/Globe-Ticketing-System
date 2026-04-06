@@ -1,7 +1,5 @@
 <?php
-session_start();
 require __DIR__ . '/../config/db.php';
-
 session_start();
 
 if ($_SESSION['lawyer_role'] !== 'admin') {

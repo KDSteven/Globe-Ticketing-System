@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '/../config/db.php';
 session_start();
 header('Content-Type: application/json');
 
@@ -6,8 +7,6 @@ if (!isset($_SESSION['lawyer_id'])) {
     echo json_encode(['ok' => false, 'error' => 'Unauthorized.']);
     exit;
 }
-
-require __DIR__ . '/../config/db.php';
 
 $lawyerId = $_SESSION['lawyer_id'];
 

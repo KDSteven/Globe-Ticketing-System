@@ -14,4 +14,15 @@ if($conn->connect_error) {
 }
 
 $conn->set_charset("utf8mb4");
+
+// Auto-apply CORS + general rate limit for all API requests
+$_scriptPath = str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME'] ?? '');
+if (str_contains($_scriptPath, '/api/')) {
+    require_once __DIR__ . '/cors.php';
+    require_once __DIR__ . '/rate_limit.php';
+    apply_cors();
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    rate_limit($conn, 'api_' . $ip, 120, 60);
+}
+unset($_scriptPath);
 ?>

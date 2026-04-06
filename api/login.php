@@ -2,6 +2,10 @@
 require __DIR__ . '/../config/db.php';
 session_start();
 
+// Brute-force protection: 5 attempts per 15 minutes per IP
+$_loginIp = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+rate_limit($conn, 'login_' . $_loginIp, 5, 900, 'Too many login attempts. Please wait 15 minutes before trying again.');
+
 $next = isset($_GET['next']) ? $_GET['next'] : '../admin_dashboard.php';
 $error = '';
 
@@ -19,6 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($row = $res->fetch_assoc()) {
       if (password_verify($pass, $row['pass_hash'])) {
+        // ✅ Regenerate session ID to prevent session fixation
+        session_regenerate_id(true);
+
         // ✅ Success — set session
         $_SESSION['lawyer_id']   = (int)$row['id'];
         $_SESSION['lawyer_name'] = $row['name'];

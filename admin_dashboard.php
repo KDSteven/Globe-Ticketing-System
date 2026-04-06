@@ -405,14 +405,14 @@ while ($row = $vres->fetch_assoc()) {
 
             <div class="kpi-card kpi-green">
                 <div class="kpi-header">
-                    <span class="kpi-label">Total Completed</span>
+                    <span class="kpi-label"><i class="fa-solid fa-circle-check kpi-icon"></i> Total Completed</span>
                     <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
                 </div>
                 <div class="kpi-value"><?= $completed ?></div>
             </div>
             <div class="kpi-card kpi-purple">
                 <div class="kpi-header">
-                    <span class="kpi-label">Completed </span>
+                    <span class="kpi-label"><i class="fa-solid fa-clock kpi-icon"></i> Completed On-Time</span>
                     <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
                 </div>
                 <div class="kpi-value"><?= $completedOnTime ?></div>
@@ -420,7 +420,7 @@ while ($row = $vres->fetch_assoc()) {
 
             <div class="kpi-card kpi-gray">
                 <div class="kpi-header">
-                    <span class="kpi-label">Completed Past SLA</span>
+                    <span class="kpi-label"><i class="fa-solid fa-triangle-exclamation kpi-icon"></i> Completed Past SLA</span>
                     <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
                 </div>
                 <div class="kpi-value"><?= $completedLate ?></div>
@@ -428,7 +428,7 @@ while ($row = $vres->fetch_assoc()) {
 
             <div class="kpi-card kpi-amber">
                 <div class="kpi-header">
-                    <span class="kpi-label">Overdue</span>
+                    <span class="kpi-label"><i class="fa-solid fa-calendar-xmark kpi-icon"></i> Overdue</span>
                     <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
                 </div>
                 <div class="kpi-value"><?= $overdue ?></div>
@@ -436,7 +436,7 @@ while ($row = $vres->fetch_assoc()) {
 
             <div class="kpi-card kpi-red">
                 <div class="kpi-header">
-                    <span class="kpi-label">For Revisions</span>
+                    <span class="kpi-label"><i class="fa-solid fa-rotate-left kpi-icon"></i> For Revisions</span>
                     <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
                 </div>
                 <div class="kpi-value"><?= $revisions ?></div>
@@ -444,7 +444,7 @@ while ($row = $vres->fetch_assoc()) {
 
             <div class="kpi-card kpi-blue">
                 <div class="kpi-header">
-                    <span class="kpi-label">Pending</span>
+                    <span class="kpi-label"><i class="fa-solid fa-hourglass-half kpi-icon"></i> Pending</span>
                     <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
                 </div>
                 <div class="kpi-value"><?= $pending ?></div>
@@ -464,6 +464,9 @@ while ($row = $vres->fetch_assoc()) {
                             <div class="contract-card-title">Contract Review</div>
                             <div class="contract-card-rate"><?= number_format($overallRate, 2) ?>%</div>
                             <div class="contract-card-sub">Overall Contract Review Rate</div>
+                            <div class="rate-bar-track">
+                                <div class="rate-bar-fill" style="width: <?= min($overallRate, 100) ?>%"></div>
+                            </div>
                         </div>
 
                         <div class="contract-card-icon">
@@ -491,7 +494,16 @@ while ($row = $vres->fetch_assoc()) {
                                     <span><?= $t ?></span>
                                     <span><?= number_format($rate, 2) ?>%</span>
                                 </div>
-                            <?php endforeach; ?>
+                            <?php endforeach;
+                                $grandTotal    = array_sum(array_column($contractBreakdown, 'total'));
+                                $grandReviewed = array_sum(array_column($contractBreakdown, 'reviewed'));
+                                $grandRate     = $grandTotal > 0 ? round(($grandReviewed / $grandTotal) * 100, 2) : 0;
+                            ?>
+                                <div class="contract-row contract-total">
+                                    <span>Total</span>
+                                    <span><?= $grandTotal ?></span>
+                                    <span><?= number_format($grandRate, 2) ?>%</span>
+                                </div>
                         <?php endif; ?>
                     </div>
                 </section>
@@ -533,9 +545,11 @@ while ($row = $vres->fetch_assoc()) {
                                     $riskClass = "risk-low";
                                 }
 
+                                $initial = mb_strtoupper(mb_substr(trim($reviewer), 0, 1));
                                 echo "
                                     <li class='rw-item'>
                                     <div class='rw-top'>
+                                        <div class='rw-avatar'>{$initial}</div>
                                         <div class='rw-name'>" . h($reviewer) . "</div>
                                         <div class='rw-badges'>
                                         <span class='rw-badge {$riskClass}'>{$riskLabel}</span>

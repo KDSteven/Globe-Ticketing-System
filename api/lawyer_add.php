@@ -1,8 +1,7 @@
 <?php
+require __DIR__ . '/../config/db.php';
 session_start();
 if (($_SESSION['lawyer_role'] ?? '') !== 'admin') exit;
-
-require __DIR__ . '/../config/db.php';
 
 $name  = trim($_POST['name']);
 $email = trim($_POST['email']);

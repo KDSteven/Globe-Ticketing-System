@@ -33,20 +33,10 @@ try {
   }
 
   // ----------------------------
-  // 2) Throttle (60s)
+  // 2) Rate limit: 3 OTP requests per hour per IP+email
   // ----------------------------
-  $stmt = $conn->prepare('SELECT created_at FROM password_resets WHERE email=? LIMIT 1');
-  $stmt->bind_param('s', $email);
-  $stmt->execute();
-  $row = $stmt->get_result()->fetch_assoc();
-  $stmt->close();
-
-  if ($row) {
-    $last = strtotime($row['created_at']);
-    if (time() - $last < 60) {
-      echo json_encode(['ok' => false, 'error' => 'Please wait before requesting another code']); exit;
-    }
-  }
+  $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+  rate_limit($conn, 'otp_' . $ip . '_' . $email, 3, 3600, 'Too many password reset attempts. Please wait an hour before requesting a new code.');
 
   // ----------------------------
   // 3) Generate + upsert OTP (hashed)

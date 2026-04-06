@@ -1,5 +1,6 @@
 <?php
 // api/ack_alerts.php
+require __DIR__ . '/../config/db.php';
 session_start();
 header('Content-Type: application/json');
 
@@ -7,7 +8,6 @@ if (empty($_SESSION['lawyer_id'])) {
   http_response_code(401);
   echo json_encode(['error'=>'unauthenticated']); exit;
 }
-require __DIR__ . '/../config/db.php';
 
 $lawyerId = (int)$_SESSION['lawyer_id'];
 

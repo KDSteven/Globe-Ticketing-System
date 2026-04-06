@@ -1,5 +1,6 @@
 <?php
 // api/notif_list.php
+require __DIR__ . '/../config/db.php';
 session_start();
 header('Content-Type: application/json');
 if (empty($_SESSION['lawyer_id'])) { http_response_code(401); echo json_encode([]); exit; }

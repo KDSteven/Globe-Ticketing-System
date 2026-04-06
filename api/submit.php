@@ -2,6 +2,10 @@
 // api/submit.php — MySQLi version
 include __DIR__ . '/../config/db.php';
 
+// Rate limit: 10 ticket submissions per hour per IP
+$_submitIp = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+rate_limit($conn, 'submit_' . $_submitIp, 10, 3600, 'You have reached the ticket submission limit. Please try again in an hour.');
+
 function redirect_ok() {
     header('Location: /customer_portal.php?ok=1'); exit;
 }

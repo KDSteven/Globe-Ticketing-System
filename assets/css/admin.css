@@ -391,14 +391,14 @@ input[type="file"]::-webkit-file-upload-button:hover{ background: var(--brand-70
 /* ==================== KPI Cards (like screenshot) ==================== */
 .kpi-grid {
     display: flex;
-    flex-wrap: nowrap;     /* force one line */
-    justify-content: space-between; /* spread evenly */
-    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 14px;
 }
 
 .kpi-card {
-    flex: 1;               /* auto-fit width */
-    min-width: 0;          /* shrink if needed */
+    flex: 1 1 160px;
+    min-width: 160px;
 }
 
 .empty-state{
@@ -410,14 +410,10 @@ input[type="file"]::-webkit-file-upload-button:hover{ background: var(--brand-70
 }
 
 @media (max-width: 900px){
-  .kpi-grid{
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .kpi-card { flex: 1 1 calc(33% - 14px); }
 }
 @media (max-width: 600px){
-  .kpi-grid{
-    grid-template-columns: 1fr;
-  }
+  .kpi-card { flex: 1 1 calc(50% - 14px); }
 }
 
 .kpi-card{
@@ -506,6 +502,59 @@ input[type="file"]::-webkit-file-upload-button:hover{ background: var(--brand-70
     color: #444;
 }
 
+
+/* KPI icon */
+.kpi-icon {
+  font-size: 12px;
+  opacity: 0.75;
+  margin-right: 3px;
+  color: var(--kpi-accent);
+}
+.kpi-gray .kpi-icon  { color: #5b5b5b; }
+.kpi-purple .kpi-icon{ color: #6c3fc7; }
+
+/* Reviewer avatar circle */
+.rw-avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  text-transform: uppercase;
+}
+.risk-high ~ .rw-avatar, .rw-item.risk-high .rw-avatar { background: #e53935; }
+
+/* Contract Review Rate progress bar */
+.rate-bar-track {
+  height: 6px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 4px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.rate-bar-fill {
+  height: 100%;
+  background: rgba(255,255,255,0.85);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* Contract breakdown totals row */
+.contract-row.contract-total {
+  border-top: 2px solid rgba(148,163,184,0.5);
+  border-bottom: none;
+  font-weight: 700;
+  margin-top: 4px;
+  padding-top: 10px;
+  color: #1e3a8a;
+}
 
 /* Legend */
 .legend{ display:flex; align-items:center; gap:18px; margin:6px 0 10px 2px; color:#1f1f1f; font-weight:600; }
@@ -730,8 +779,22 @@ table.tickets{ width:100%; border-collapse:separate; border-spacing:0; }
     display: flex;
     align-items: center;
     gap: 14px;
-    flex-wrap: nowrap !important;   /* ❗ FORCE ONE LINE */
-    white-space: nowrap;            /* ❗ Prevent wrapping */
+    flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .date-filter-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 12px;
+  }
+  #filterForm {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .add-holiday-btn {
+    align-self: flex-start;
+  }
 }
 
 #filterForm select,
