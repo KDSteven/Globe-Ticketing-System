@@ -1,5 +1,11 @@
 // Minimal, framework-free toast helper
 (() => {
+  function escHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => (
+      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
+    ));
+  }
+
   const ICONS = {
     success: 'fa-solid fa-check',
     error:   'fa-solid fa-triangle-exclamation',
@@ -35,8 +41,8 @@
       <div class="toast__body">
         <span class="toast__icon"><i class="${ICONS[type] || ICONS.info}"></i></span>
         <div class="toast__copy">
-          <div class="toast__title">${title}</div>
-          ${message ? `<div class="toast__msg">${message}</div>` : ``}
+          <div class="toast__title">${escHtml(title)}</div>
+          ${message ? `<div class="toast__msg">${escHtml(message)}</div>` : ``}
         </div>
       </div>
       <button class="toast__close" aria-label="Dismiss">&times;</button>

@@ -18,13 +18,10 @@ document.getElementById("changePwForm")?.addEventListener("submit", async functi
     const payload = { current, new: newpw, confirm };
 
     try {
-        const res = await fetch("/api/change_password.php", {
+        const data = await apiFetch("/api/change_password.php", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
-
-        const data = await res.json();
 
         if (data.ok) {
             toast.success("Password Updated", "Your password has been changed.");

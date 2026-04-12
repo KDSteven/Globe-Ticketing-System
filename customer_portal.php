@@ -275,6 +275,7 @@ include __DIR__ . '/assets/partials/brandbar.php';
     </div>
   </form>
 </main>
+  <script src="/assets/js/api.js"></script>
   <script src="/assets/js/form-routing.js"></script>
   <script src="/assets/js/wizard.js"></script>
   <script src="/assets/js/prev_ticket_loader.js"></script>

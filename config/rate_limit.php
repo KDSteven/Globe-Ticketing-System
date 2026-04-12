@@ -18,24 +18,30 @@ function rate_limit(mysqli $conn, string $key, int $max, int $window, string $me
     $windowStart = $now - $window;
 
     // Purge expired buckets
-    $conn->query("DELETE FROM rate_limits WHERE window_start < $windowStart");
+    $stmt = $conn->prepare("DELETE FROM rate_limits WHERE window_start < ?");
+    $stmt->bind_param("i", $windowStart);
+    $stmt->execute();
+    $stmt->close();
 
-    $safeKey = $conn->real_escape_string($key);
-    $row     = $conn->query(
-        "SELECT requests, window_start FROM rate_limits WHERE rl_key='$safeKey' LIMIT 1"
-    )->fetch_assoc();
+    $stmt = $conn->prepare("SELECT requests, window_start FROM rate_limits WHERE rl_key = ? LIMIT 1");
+    $stmt->bind_param("s", $key);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
 
     if (!$row) {
-        $conn->query(
-            "INSERT INTO rate_limits (rl_key, requests, window_start) VALUES ('$safeKey', 1, $now)"
-        );
+        $stmt = $conn->prepare("INSERT INTO rate_limits (rl_key, requests, window_start) VALUES (?, 1, ?)");
+        $stmt->bind_param("si", $key, $now);
+        $stmt->execute();
+        $stmt->close();
         return;
     }
 
     if ((int)$row['window_start'] < $windowStart) {
-        $conn->query(
-            "UPDATE rate_limits SET requests=1, window_start=$now WHERE rl_key='$safeKey'"
-        );
+        $stmt = $conn->prepare("UPDATE rate_limits SET requests = 1, window_start = ? WHERE rl_key = ?");
+        $stmt->bind_param("is", $now, $key);
+        $stmt->execute();
+        $stmt->close();
         return;
     }
 
@@ -226,5 +232,8 @@ function rate_limit(mysqli $conn, string $key, int $max, int $window, string $me
         exit;
     }
 
-    $conn->query("UPDATE rate_limits SET requests=requests+1 WHERE rl_key='$safeKey'");
+    $stmt = $conn->prepare("UPDATE rate_limits SET requests = requests + 1 WHERE rl_key = ?");
+    $stmt->bind_param("s", $key);
+    $stmt->execute();
+    $stmt->close();
 }

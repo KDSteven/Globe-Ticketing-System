@@ -32,27 +32,37 @@ function waitForGroupOptions(callback) {
     observer.observe(sel, { childList: true });
 }
 
+// === Status helper: avoids innerHTML with dynamic content ===
+function setStatus(el, text, type = 'info') {
+    const colors = { error: 'red', success: 'green', info: '' };
+    el.textContent = '';
+    const span = document.createElement('span');
+    if (colors[type]) span.style.color = colors[type];
+    span.textContent = text;
+    el.appendChild(span);
+}
+
 // === Load Previous Ticket Details ===
 document.getElementById("loadPrevTicketBtn").addEventListener("click", () => {
     const ticketId = document.getElementById("prev_ticket_id").value.trim();
     const statusBox = document.getElementById("prevTicketStatus");
 
     if (ticketId === "") {
-        statusBox.innerHTML = "<span style='color:red'>Please enter a Ticket ID.</span>";
+        setStatus(statusBox, "Please enter a Ticket ID.", "error");
         return;
     }
 
-    statusBox.innerHTML = "Loading…";
+    setStatus(statusBox, "Loading…");
 
     fetch(`/api/get_previous_ticket.php?code=${encodeURIComponent(ticketId)}`)
         .then(r => r.json())
         .then(data => {
             if (data.error) {
-                statusBox.innerHTML = `<span style='color:red'>${data.error}</span>`;
+                setStatus(statusBox, data.error, "error");
                 return;
             }
 
-            statusBox.innerHTML = "<span style='color:green'>Ticket loaded! Auto-filled details.</span>";
+            setStatus(statusBox, "Ticket loaded! Auto-filled details.", "success");
 
             // === Fill text fields ===
             document.getElementById("full_name").value = data.full_name;
@@ -100,6 +110,6 @@ document.getElementById("loadPrevTicketBtn").addEventListener("click", () => {
             document.getElementById("doc_link").value = data.doc_link;
         })
         .catch(err => {
-            statusBox.innerHTML = `<span style='color:red'>System error: ${err}</span>`;
+            setStatus(statusBox, `System error: ${err instanceof Error ? err.message : String(err)}`, "error");
         });
 });

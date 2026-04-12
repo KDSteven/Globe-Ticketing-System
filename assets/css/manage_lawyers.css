@@ -24,21 +24,6 @@
     padding: 20px;
 }
 
-.btn.primary {
-    background: #2E3192;
-    color: #fff;
-    padding: 10px 18px;
-    border-radius: 8px;
-    display: inline-block;
-    text-decoration: none;
-    font-weight: 600;
-    transition: 0.2s;
-}
-
-.btn.primary:hover {
-    background: #1f2470;
-}
-
 .card-table {
     background: #fff;
     border-radius: 14px;
@@ -93,51 +78,7 @@
 .btn.small.danger:hover {
     background: #ffcdcd;
 }
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9000;
-}
-
-.modal-box {
-    background: #fff;
-    padding: 28px;
-    width: min(420px, 92%);
-    border-radius: 14px;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.15);
-}
-
-.modal-box h2 {
-    margin-top: 0;
-    margin-bottom: 16px;
-}
-
-.modal-box label {
-    font-weight: 600;
-    display: block;
-    margin-top: 12px;
-    margin-bottom: 4px;
-}
-
-.modal-box input,
-.modal-box select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-}
-
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 15px;
-}
+/* .modal-overlay, .modal-box, .modal-actions — defined in admin.css */
 
 .btn.secondary {
     background: #e3e3e3;

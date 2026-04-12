@@ -1,10 +1,10 @@
 <?php
 // api/notif_list.php
-require __DIR__ . '/../config/db.php';
 session_start();
-header('Content-Type: application/json');
-if (empty($_SESSION['lawyer_id'])) { http_response_code(401); echo json_encode([]); exit; }
+require_once __DIR__ . '/../utils/auth.php';
+requireLawyer();
 require __DIR__ . '/../config/db.php';
+header('Content-Type: application/json');
 
 /*
   If you only have DATE in due_date:

@@ -7,14 +7,10 @@ if (empty($_SESSION['lawyer_id'])) {
 
 require __DIR__ . '/config/db.php';
 require __DIR__ . '/utils/pagination.php';
+require_once __DIR__ . '/utils/helpers.php';
 
 // include your query logic for search, pagination, filters
 include __DIR__ . '/api/query_tickets.php';
-
-function h($s)
-{
-  return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
-}
 function status_class($status, $due_date, $completed_at = null)
 {
 
@@ -262,58 +258,7 @@ function status_class($status, $due_date, $completed_at = null)
 
   <script src="/assets/js/sidebar.js"></script>
   <script src="/assets/js/showToast.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const modal = document.getElementById('remarksModal');
-      if (!modal) return;
-
-      const titleEl = document.getElementById('remarksModalTitle');
-      const idEl = document.getElementById('remarksTicketId');
-      const textEl = document.getElementById('remarksText');
-      const closeBtn = document.getElementById('closeRemarksModal');
-
-      function openModal({
-        id,
-        ticket,
-        remarks
-      }) {
-        idEl.value = id;
-        textEl.value = remarks || '';
-        titleEl.textContent = `Remarks — ${ticket}`;
-        modal.style.display = 'flex';
-        setTimeout(() => textEl.focus(), 50);
-      }
-
-      function closeModal() {
-        modal.style.display = 'none';
-        idEl.value = '';
-        textEl.value = '';
-      }
-
-      document.addEventListener('click', (e) => {
-        const btn = e.target.closest('.openRemarksModal');
-        if (!btn) return;
-
-        openModal({
-          id: btn.dataset.id,
-          ticket: btn.dataset.ticket,
-          remarks: btn.dataset.remarks
-        });
-      });
-
-      closeBtn.addEventListener('click', closeModal);
-
-      // Click outside closes
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-      });
-
-      // ESC closes
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.style.display !== 'none') closeModal();
-      });
-    });
-  </script>
+  <script src="/assets/js/remarks-modal.js"></script>
 </body>
 
 </html>

@@ -1,12 +1,8 @@
 <?php
-require __DIR__ . '/../config/db.php';
 session_start();
-
-if ($_SESSION['lawyer_role'] !== 'admin') {
-    http_response_code(403);
-    echo json_encode(['error' => 'Forbidden']);
-    exit;
-}
+require_once __DIR__ . '/../utils/auth.php';
+requireAdmin();
+require __DIR__ . '/../config/db.php';
 
 $date = $_POST['date'] ?? null;
 $description = $_POST['description'] ?? null;

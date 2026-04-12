@@ -1,4 +1,7 @@
 <?php
+session_start();
+require_once __DIR__ . '/../utils/auth.php';
+requireAdmin();
 require __DIR__ . '/../config/db.php';
 
 if (!isset($_GET['id'])) {

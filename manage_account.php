@@ -1,9 +1,7 @@
 <?php
 session_start();
-if (!isset($_SESSION['lawyer_id'])) {
-    header("Location: login.php");
-    exit;
-}
+require_once __DIR__ . '/utils/auth.php';
+requireLawyer();
 
 $name = $_SESSION['lawyer_name'];
 $email = $_SESSION['lawyer_email'];
@@ -130,6 +128,7 @@ include __DIR__ . '/assets/partials/brandbar.php';
 <script src="/assets/js/sidebar.js"></script>
 <script src="/assets/js/toast.js"></script>
 <script src="/assets/js/showToast.js"></script>
+<script src="/assets/js/api.js"></script>
 <script src="/assets/js/accounts.js"></script>
 </body>
 </html>

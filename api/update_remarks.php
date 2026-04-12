@@ -1,10 +1,8 @@
 <?php
-require __DIR__ . '/../config/db.php';
 session_start();
-if (empty($_SESSION['lawyer_id'])) {
-    header("Location: ../login.php");
-    exit;
-}
+require_once __DIR__ . '/../utils/auth.php';
+requireLawyer();
+require __DIR__ . '/../config/db.php';
 
 // Ensure remarks + id are present
 if (!isset($_POST['id']) || !isset($_POST['remarks'])) {

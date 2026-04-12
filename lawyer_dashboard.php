@@ -6,51 +6,18 @@ if (empty($_SESSION['lawyer_id'])) {
 }
 
 require __DIR__ . '/config/db.php';
-function h($s)
-{
-    return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
-}
+require_once __DIR__ . '/utils/helpers.php';
 
 /* ------------------------------------------------------
-   READ FILTER INPUTS
+   READ FILTER INPUTS — validated against whitelist/regex
 ------------------------------------------------------ */
-$period = $_GET['period'] ?? 'all';
-$date     = $_GET['date']    ?? date('Y-m-d');
-$month    = $_GET['month']   ?? date('Y-m');
-$year     = $_GET['year']    ?? date('Y');
-$quarter  = $_GET['quarter'] ?? 'Q1';
-
-/* ------------------------------------------------------
-   DATE CONDITION BUILDER
------------------------------------------------------- */
-function dateCondition($period, $date, $month, $quarter, $year)
-{
-    switch ($period) {
-
-        case "all":
-            return "1"; // no filtering
-
-        case "daily":
-            return "DATE(created_at) = '$date'";
-
-        case "monthly":
-            return "DATE_FORMAT(created_at,'%Y-%m') = '$month'";
-
-        case "quarterly":
-            $ranges = [
-                'Q1' => ['01-01', '03-31'],
-                'Q2' => ['04-01', '06-30'],
-                'Q3' => ['07-01', '09-30'],
-                'Q4' => ['10-01', '12-31']
-            ];
-            [$start, $end] = $ranges[$quarter];
-            return "created_at BETWEEN '$year-$start' AND '$year-$end'";
-
-        case "yearly":
-            return "YEAR(created_at) = '$year'";
-    }
-}
-
+$validPeriods  = ['all', 'daily', 'monthly', 'quarterly', 'yearly'];
+$validQuarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+$period  = in_array($_GET['period']  ?? '', $validPeriods,  true) ? $_GET['period']  : 'all';
+$quarter = in_array($_GET['quarter'] ?? '', $validQuarters, true) ? $_GET['quarter'] : 'Q1';
+$date    = preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['date']  ?? '') ? $_GET['date']  : date('Y-m-d');
+$month   = preg_match('/^\d{4}-\d{2}$/',       $_GET['month'] ?? '') ? $_GET['month'] : date('Y-m');
+$year    = preg_match('/^\d{4}$/',             $_GET['year']  ?? '') ? $_GET['year']  : date('Y');
 
 $where = dateCondition($period, $date, $month, $quarter, $year);
 $whereSQL = "WHERE $where";

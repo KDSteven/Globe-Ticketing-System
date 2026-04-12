@@ -14,8 +14,7 @@
     // Load routing rules from DB
     let routing = {};
     try {
-        const res = await fetch("/api/get_routing_list.php");
-        routing = await res.json();
+        routing = await apiFetch("/api/get_routing_list.php");
     } catch (err) {
         console.error("Cannot load routing list:", err);
     }

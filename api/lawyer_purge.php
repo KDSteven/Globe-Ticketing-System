@@ -1,9 +1,7 @@
 <?php
 session_start();
-if (($_SESSION['lawyer_role'] ?? '') !== 'admin') {
-    http_response_code(403);
-    exit('Forbidden');
-}
+require_once __DIR__ . '/../utils/auth.php';
+requireAdmin();
 require __DIR__ . '/../config/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

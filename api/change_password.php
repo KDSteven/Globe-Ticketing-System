@@ -1,12 +1,9 @@
 <?php
-require __DIR__ . '/../config/db.php';
 session_start();
+require_once __DIR__ . '/../utils/auth.php';
+requireLawyer();
+require __DIR__ . '/../config/db.php';
 header('Content-Type: application/json');
-
-if (!isset($_SESSION['lawyer_id'])) {
-    echo json_encode(['ok' => false, 'error' => 'Unauthorized.']);
-    exit;
-}
 
 $lawyerId = $_SESSION['lawyer_id'];
 

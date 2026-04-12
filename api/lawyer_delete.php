@@ -1,7 +1,8 @@
 <?php
-require __DIR__ . '/../config/db.php';
 session_start();
-if (($_SESSION['lawyer_role'] ?? '') !== 'admin') exit;
+require_once __DIR__ . '/../utils/auth.php';
+requireAdmin();
+require __DIR__ . '/../config/db.php';
 
 $id = $_GET['id'];
 

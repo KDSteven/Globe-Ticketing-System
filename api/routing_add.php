@@ -1,10 +1,7 @@
 <?php
 session_start();
-
-if (($_SESSION['lawyer_role'] ?? '') !== 'admin') {
-    die("Unauthorized");
-}
-
+require_once __DIR__ . '/../utils/auth.php';
+requireAdmin();
 require __DIR__ . '/../config/db.php';
 
 $ticket_type     = trim($_POST['ticket_type'] ?? '');

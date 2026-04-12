@@ -1,5 +1,10 @@
 <?php
-// api/due_soon_email.php
+// api/due_soon_email.php — intended to run as a CLI cron job only.
+// Block direct web requests so this can never be triggered via HTTP.
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit('Forbidden');
+}
 
 require_once __DIR__ . '/../config/db.php';
 $mailConfig = require __DIR__ . '/../config/mail.php';

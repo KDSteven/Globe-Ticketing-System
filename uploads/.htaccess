@@ -1,0 +1,17 @@
+# Prevent execution of any script in the uploads directory.
+# Files here are user-uploaded attachments and must never run as code.
+
+# Disable PHP execution
+<FilesMatch "\.php$">
+    Deny from all
+</FilesMatch>
+
+# Disable CGI, SSI, and other server-side processing
+Options -ExecCGI -Indexes
+RemoveHandler .php .php3 .php4 .php5 .php7 .php8 .phtml .phar
+RemoveType application/x-httpd-php
+
+# Force all files to download as binary (not rendered in browser)
+<FilesMatch ".+">
+    Header set Content-Disposition "attachment"
+</FilesMatch>

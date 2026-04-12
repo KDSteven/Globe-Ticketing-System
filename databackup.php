@@ -8,12 +8,11 @@ if (empty($_SESSION['lawyer_id']) || ($_SESSION['lawyer_role'] ?? '') !== 'admin
 
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/utils/db_backup.php';
+require_once __DIR__ . '/utils/helpers.php';
 
 if (!isset($conn) || !($conn instanceof mysqli)) {
     die("Database connection not found. Check config/db.php.");
 }
-
-function h($s){ return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 
 // ---------------------------
 // Handle actions

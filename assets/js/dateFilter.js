@@ -1,33 +1,49 @@
 // dateFilter.js
 function renderDateInput(period, date, month, quarter, year) {
     const container = document.getElementById("dateContainer");
-    let html = "";
+    container.textContent = ''; // clear safely
 
-    switch(period) {
+    function makeInput(type, name, value, attrs = {}) {
+        const el = document.createElement('input');
+        el.type = type;
+        el.name = name;
+        el.value = value;
+        Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+        return el;
+    }
+
+    switch (period) {
         case "daily":
-            html = `<input type="date" name="date" value="${date}">`;
+            container.appendChild(makeInput('date', 'date', date));
             break;
 
         case "monthly":
-            html = `<input type="month" name="month" value="${month}">`;
+            container.appendChild(makeInput('month', 'month', month));
             break;
 
-        case "quarterly":
-            html = `
-                <select name="quarter">
-                    <option value="Q1" ${quarter === "Q1" ? "selected" : ""}>Q1 (Jan–Mar)</option>
-                    <option value="Q2" ${quarter === "Q2" ? "selected" : ""}>Q2 (Apr–Jun)</option>
-                    <option value="Q3" ${quarter === "Q3" ? "selected" : ""}>Q3 (Jul–Sep)</option>
-                    <option value="Q4" ${quarter === "Q4" ? "selected" : ""}>Q4 (Oct–Dec)</option>
-                </select>
-                <input type="number" name="year" min="2020" max="2100" value="${year}">
-            `;
+        case "quarterly": {
+            const quarters = [
+                ['Q1', 'Q1 (Jan–Mar)'],
+                ['Q2', 'Q2 (Apr–Jun)'],
+                ['Q3', 'Q3 (Jul–Sep)'],
+                ['Q4', 'Q4 (Oct–Dec)'],
+            ];
+            const sel = document.createElement('select');
+            sel.name = 'quarter';
+            quarters.forEach(([val, label]) => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = label;
+                if (val === quarter) opt.selected = true;
+                sel.appendChild(opt);
+            });
+            container.appendChild(sel);
+            container.appendChild(makeInput('number', 'year', year, { min: '2020', max: '2100' }));
             break;
+        }
 
         case "yearly":
-            html = `<input type="number" name="year" min="2020" max="2100" value="${year}">`;
+            container.appendChild(makeInput('number', 'year', year, { min: '2020', max: '2100' }));
             break;
     }
-
-    container.innerHTML = html;
 }

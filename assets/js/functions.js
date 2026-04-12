@@ -1,41 +1,31 @@
 // -------------------------------
-// Holiday Modal Functions
+// Generic Simple Modal Helper
 // -------------------------------
-document.addEventListener("DOMContentLoaded", function () {
-  const openBtn  = document.getElementById("addHolidayBtn");
-  const closeBtn = document.getElementById("closeHolidayModal");
-  const modal    = document.getElementById("holidayModal");
+/**
+ * Wire up a basic open/close modal by element IDs.
+ * Returns false (safely) when any element is missing — safe to call on any page.
+ */
+function simpleModal(openBtnId, closeBtnId, modalId) {
+  const openBtn = document.getElementById(openBtnId);
+  const closeBtn = document.getElementById(closeBtnId);
+  const modal   = document.getElementById(modalId);
+  if (!modal) return;
+  openBtn?.addEventListener('click', () => { modal.style.display = 'flex'; });
+  closeBtn?.addEventListener('click', () => { modal.style.display = 'none'; });
+}
 
-  if (openBtn && modal) {
-    openBtn.addEventListener("click", () => {
-      modal.style.display = "flex";
-    });
-  }
-
-  if (closeBtn && modal) {
-    closeBtn.addEventListener("click", () => {
-      modal.style.display = "none";
-    });
-  }
+// -------------------------------
+// Holiday Modal
+// -------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  simpleModal("addHolidayBtn", "closeHolidayModal", "holidayModal");
 });
 
 // -------------------------------
 // Add Lawyer Modal (Admin Only)
 // -------------------------------
 function initAddLawyerModal() {
-  const openBtn  = document.getElementById("openAddLawyerModal");
-  const closeBtn = document.getElementById("closeAddLawyerModal");
-  const modal    = document.getElementById("addLawyerModal");
-
-  if (!openBtn || !closeBtn || !modal) return;
-
-  openBtn.addEventListener("click", () => {
-    modal.style.display = "flex";
-  });
-
-  closeBtn.addEventListener("click", () => {
-    modal.style.display = "none";
-  });
+  simpleModal("openAddLawyerModal", "closeAddLawyerModal", "addLawyerModal");
 }
 
 // -------------------------------

@@ -6,8 +6,7 @@ if (($_SESSION['lawyer_role'] ?? '') !== 'admin') {
 }
 
 require __DIR__ . '/config/db.php';
-
-function h($s){ return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
+require_once __DIR__ . '/utils/helpers.php';
 
 /* ---------------------------------------------------
    FETCH CONTRACT TYPES FROM CENTRAL CONFIG
@@ -296,64 +295,10 @@ include __DIR__ . '/assets/partials/brandbar.php';
 <script src="/assets/js/Toast.js"></script>
 <script src="/assets/js/showToast.js"></script>
 <script src="assets/js/functions.js"></script>
-
-<script>
-document.getElementById("openAddRuleModal").onclick = () =>
-    document.getElementById("addRuleModal").style.display = "flex";
-
-document.getElementById("closeAddRuleModal").onclick = () =>
-    document.getElementById("addRuleModal").style.display = "none";
-
-document.querySelectorAll(".editRuleBtn").forEach(btn => {
-    btn.onclick = () => {
-        document.getElementById("editRuleId").value = btn.dataset.id;
-        document.getElementById("editRuleDisplay").value = btn.dataset.display || "";
-        document.getElementById("editRuleType").value = btn.dataset.type;
-        document.getElementById("editRuleLawyer").value = btn.dataset.lawyer;
-        document.getElementById("editRuleActive").value = btn.dataset.active;
-        document.getElementById("editRuleModal").style.display = "flex";
-
-        let cc = btn.dataset.cc ? btn.dataset.cc.split(",") : [];
-        let ccSelect = document.getElementById("editRuleCC");
-
-        [...ccSelect.options].forEach(opt => {
-            opt.selected = cc.includes(opt.value);
-        });
-    };
-});
-
-document.getElementById("closeEditRuleModal").onclick = () =>
-    document.getElementById("editRuleModal").style.display = "none";
-</script>
-
+<script src="/assets/js/manage-routing.js"></script>
 <?php if (!empty($_GET['success'])): ?>
-<script>
-toast.success("Success", <?= json_encode($_GET['success']) ?>);
-</script>
+<script>toast.success("Success", <?= json_encode(h($_GET['success'])) ?>);</script>
 <?php endif; ?>
-
-<script>
-document.getElementById("routingSearch").addEventListener("keyup", function() {
-    const term = this.value.toLowerCase();
-    const rows = document.querySelectorAll(".data-table tbody tr");
-
-    rows.forEach(row => {
-        const ticketType = row.cells[0].innerText.toLowerCase();
-        const lawyer     = row.cells[1].innerText.toLowerCase();
-        const status     = row.cells[2].innerText.toLowerCase();
-
-        if (
-            ticketType.includes(term) || 
-            lawyer.includes(term) ||
-            status.includes(term)
-        ) {
-            row.style.display = "";
-        } else {
-            row.style.display = "none";
-        }
-    });
-});
-</script>
 
 </body>
 </html>

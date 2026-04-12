@@ -1,5 +1,8 @@
 <?php
 session_start();
+require_once __DIR__ . '/../utils/auth.php';
+requireLawyer();
+
 header('Content-Type: application/json');
 
 // ===== Error Handling for Dev =====
@@ -22,14 +25,6 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
   echo json_encode(['success' => false, 'message' => 'Database connection failed.']);
   exit;
 }
-
-// ===== Authentication (adjust as needed) =====
-if (empty($_SESSION['user_id'])) {
-  echo json_encode(['success' => false, 'message' => 'Not authenticated.']);
-  exit;
-}
-$user_id = (int)$_SESSION['user_id'];
-$role    = $_SESSION['role'] ?? 'requestor';
 
 // ===== Input =====
 $ticket_id = trim($_GET['ticket_id'] ?? '');
