@@ -91,18 +91,24 @@ function status_class($status, $due_date, $completed_at = null)
   <main class="container-fluid page" id="mainContent">
 
     <div class="legend">
-      <span class="dot dot-green"></span> Completed
-      <span class="dot dot-blue"></span> Completed (Past Due)
-      <span class="dot dot-red"></span> Overdue
-      <span class="dot dot-gray"></span> Pending
-      <span class="dot dot-amber"></span> For revisions
-      <span class="dot dot-black"></span> Closed - No Response
+      <a href="tickets.php?status=Completed" class="legend-link <?= $status === 'Completed' ? 'active-filter' : '' ?>"><span class="dot dot-green"></span> Completed</a>
+      <a href="tickets.php?status=Completed" class="legend-link <?= $status === 'Completed' ? 'active-filter' : '' ?>"><span class="dot dot-blue"></span> Completed (Past Due)</a>
+      <a href="tickets.php?status=Overdue" class="legend-link <?= $status === 'Overdue' ? 'active-filter' : '' ?>"><span class="dot dot-red"></span> Overdue</a>
+      <a href="tickets.php?status=Pending" class="legend-link <?= $status === 'Pending' ? 'active-filter' : '' ?>"><span class="dot dot-gray"></span> Pending</a>
+      <a href="tickets.php?status=For+Revisions" class="legend-link <?= $status === 'For Revisions' ? 'active-filter' : '' ?>"><span class="dot dot-amber"></span> For Revisions</a>
+      <a href="tickets.php?status=Closed+-+No+Response" class="legend-link <?= $status === 'Closed - No Response' ? 'active-filter' : '' ?>"><span class="dot dot-black"></span> Closed - No Response</a>
+      <?php if ($status !== ''): ?>
+        <a href="tickets.php" class="legend-link" style="color:#6b7280;font-size:12px;"><i class="fa-solid fa-xmark"></i> Clear filter</a>
+      <?php endif; ?>
     </div>
 
     <!-- Search + Filter Toolbar -->
     <div class="toolbar">
       <form class="search" method="get" action="">
-        <input type="text" name="q" value="<?= h($q) ?>" placeholder="Search ticket, requestor, email…">
+        <div class="search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" name="q" value="<?= h($q) ?>" placeholder="Search ticket, requestor, email…">
+        </div>
 
         <select name="status" class="status-filter" onchange="this.form.submit()">
           <option value="" <?= $status === '' ? 'selected' : ''; ?>>All</option>
@@ -144,13 +150,25 @@ function status_class($status, $due_date, $completed_at = null)
             <th>DUE DATE</th>
             <th>REVIEWER</th>
             <th>CONTRACT TYPE</th>
+            <th>STATUS</th>
             <th>ACTION</th>
             <th>REMARKS</th>
           </tr>
         </thead>
         <tbody>
-          <?php while ($r = $rows->fetch_assoc()):
+          <?php
+          $badgeMap = [
+            'row-pending'          => 'badge-pending',
+            'row-overdue'          => 'badge-overdue',
+            'row-revisions'        => 'badge-revisions',
+            'row-revisions-overdue'=> 'badge-revisions-late',
+            'row-completed'        => 'badge-completed',
+            'row-completed-late'   => 'badge-completed-late',
+            'row-closed'           => 'badge-closed',
+          ];
+          while ($r = $rows->fetch_assoc()):
             $class = status_class($r['status'], $r['due_date'] ?? null, $r['completed_at'] ?? null);
+            $badgeClass = $badgeMap[$class] ?? 'badge-pending';
             $reviewerName = $r['reviewer_name'] ?? 'Unassigned';
           ?>
             <tr class="<?= $class ?>">
@@ -164,10 +182,14 @@ function status_class($status, $due_date, $completed_at = null)
               <td><?= h($r['contract_type']) ?></td>
 
               <td>
+                <span class="status-badge <?= $badgeClass ?>"><?= h($r['status']) ?></span>
+              </td>
+
+              <td>
                 <form method="post" action="api/update_status.php">
                   <input type="hidden" name="id" value="<?= (int)$r['id'] ?>">
                   <select name="status" onchange="this.form.submit()"
-                    <?= in_array($r['status'], ['Completed', 'Closed - No Response'], true) ? 'disabled' : '' ?>>
+                    <?= in_array($r['status'], ['Completed', 'Closed - No Response'], true) ? 'disabled title="Status is locked for completed or closed tickets"' : '' ?>>
                     <option value="Pending" <?= $r['status'] === 'Pending' ? 'selected' : ''; ?>>Pending</option>
                     <option value="For Revisions" <?= $r['status'] === 'For Revisions' ? 'selected' : ''; ?>>For Revisions</option>
                     <option value="Completed" <?= $r['status'] === 'Completed' ? 'selected' : ''; ?>>Completed</option>
@@ -194,6 +216,14 @@ function status_class($status, $due_date, $completed_at = null)
 
             </tr>
           <?php endwhile; ?>
+          <?php if ($total === 0): ?>
+            <tr>
+              <td colspan="10" class="empty-state">
+                <i class="fa-solid fa-ticket"></i>
+                No tickets found<?= ($q !== '' || $status !== '') ? ' — try a different search or filter' : '' ?>.
+              </td>
+            </tr>
+          <?php endif; ?>
         </tbody>
       </table>
 
@@ -231,6 +261,7 @@ function status_class($status, $due_date, $completed_at = null)
   </main>
 
   <script src="/assets/js/sidebar.js"></script>
+  <script src="/assets/js/showToast.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const modal = document.getElementById('remarksModal');

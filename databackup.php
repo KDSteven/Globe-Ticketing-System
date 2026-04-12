@@ -97,30 +97,6 @@ $currentMilestone = intdiv($ticketCount, BACKUP_EVERY) * BACKUP_EVERY;
   <link rel="icon" type="image/x-icon" href="/assets/img/favicon/favicon.ico">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 
-  <style>
-    .backup-page { padding: 20px; }
-    .backup-page .card{
-      background:#fff;
-      border-radius:10px;
-      padding:16px;
-      margin-bottom:16px;
-      box-shadow:0 1px 6px rgba(0,0,0,.08);
-    }
-    .backup-page .row{ display:flex; gap:16px; flex-wrap:wrap; }
-    .backup-page .col{ flex:1 1 360px; }
-    .backup-page .btn{
-      display:inline-block;
-      padding:10px 14px;
-      border-radius:8px;
-      border:0;
-      cursor:pointer;
-      text-decoration:none;
-    }
-    .backup-page .btn-primary{ background:#2b2f8f; color:#fff; }
-    .backup-page .btn-danger{ background:#b91c1c; color:#fff; }
-    .backup-page .hint{ color:#555; font-size:.95rem; }
-    .backup-page code{ background:#f3f4f6; padding:2px 6px; border-radius:6px; }
-  </style>
 </head>
 <body>
 
@@ -138,61 +114,70 @@ include __DIR__ . '/assets/partials/brandbar.php';
 <div id="sbBackdrop" aria-hidden="true"></div>
 
 <main class="container-fluid page" id="mainContent">
-  <div class="backup-page">
 
-    <h2>Data Backup</h2>
-    <p class="hint">
-      Auto-backup runs when total tickets reach every <b><?php echo (int)BACKUP_EVERY; ?></b> tickets (50, 100, 150...).
-    </p>
+  <h1 class="page-title">Data Backup</h1>
+  <p class="hint" style="padding: 0 24px 16px;">
+    Auto-backup runs when total tickets reach every <b><?php echo (int)BACKUP_EVERY; ?></b> tickets (50, 100, 150…).
+  </p>
 
-    <div class="row">
-      <div class="col card">
-        <h3>Status</h3>
-        <p><b>Total tickets:</b> <?php echo (int)$ticketCount; ?></p>
-        <p><b>Current milestone:</b> <?php echo (int)$currentMilestone; ?></p>
-        <p><b>Last backup file:</b> <?php echo $meta['last_file'] ? h($meta['last_file']) : 'None'; ?></p>
-        <p><b>Last backup time:</b> 
-        <?php
-        if ($meta['last_time']) {
-            echo h(date('M j, Y \a\t g:i A', strtotime($meta['last_time'])));
-        } else {
-            echo 'None';
-        }
-        ?>
-
+  <!-- STATUS KPI CARDS -->
+  <section class="kpi-grid" style="padding: 0 24px; margin-bottom: 24px;">
+    <div class="kpi-card kpi-blue">
+      <div class="kpi-icon"><i class="fa-solid fa-ticket"></i></div>
+      <div class="kpi-value"><?= (int)$ticketCount ?></div>
+      <div class="kpi-label">Total Tickets</div>
+    </div>
+    <div class="kpi-card kpi-purple">
+      <div class="kpi-icon"><i class="fa-solid fa-flag-checkered"></i></div>
+      <div class="kpi-value"><?= (int)$currentMilestone ?></div>
+      <div class="kpi-label">Current Milestone</div>
+    </div>
+    <div class="kpi-card kpi-green">
+      <div class="kpi-icon"><i class="fa-solid fa-database"></i></div>
+      <div class="kpi-value" style="font-size:13px; font-weight:700; word-break:break-all; margin-top:10px;">
+        <?= $meta['last_file'] ? h($meta['last_file']) : 'None' ?>
       </div>
-
-      <div class="col card">
-        <h3>Download Backup Now</h3>
-        <p class="hint">Creates a new backup and downloads it immediately.</p>
-
-        <!-- NOTE: this triggers download; showToast.js cannot show toast for that response -->
-        <a class="btn btn-primary"
-           href="databackup.php?action=backup_now"
-           target="_blank"
-           rel="noopener">
-          Create & Download Backup
-        </a>
-
-        <p class="hint" style="margin-top:10px;">
-          (Download opens in a new tab.)
-        </p>
+      <div class="kpi-label">Last Backup File</div>
+    </div>
+    <div class="kpi-card kpi-gray">
+      <div class="kpi-icon"><i class="fa-regular fa-clock"></i></div>
+      <div class="kpi-value" style="font-size:13px; font-weight:700; margin-top:10px;">
+        <?= $meta['last_time'] ? h(date('M j, Y g:i A', strtotime($meta['last_time']))) : 'Never' ?>
       </div>
+      <div class="kpi-label">Last Backup Time</div>
+    </div>
+  </section>
 
-      <div class="col card">
-        <h3>Restore Database</h3>
-        <p class="hint">
-          ⚠️ Restoring will overwrite existing tables (drops and recreates). Only upload backups you trust.
-        </p>
-        <form method="POST" enctype="multipart/form-data">
-          <input type="file" name="sql_file" accept=".sql" required />
-          <br><br>
-          <button type="submit" name="restore" class="btn btn-danger">Restore Database</button>
-        </form>
-      </div>
+  <!-- ACTION CARDS -->
+  <div class="backup-actions" style="padding: 0 24px;">
+
+    <div class="card">
+      <h3><i class="fa-solid fa-cloud-arrow-down"></i> Download Backup</h3>
+      <p class="hint" style="margin: 8px 0 16px;">Creates a new .sql backup and downloads it immediately.</p>
+      <!-- NOTE: this triggers a file download; showToast.js cannot intercept that response -->
+      <a class="btn primary" href="databackup.php?action=backup_now" target="_blank" rel="noopener">
+        <i class="fa-solid fa-download"></i> Create & Download
+      </a>
+      <p class="hint" style="margin-top: 8px;">Opens in a new tab.</p>
+    </div>
+
+    <div class="card">
+      <h3><i class="fa-solid fa-rotate-left"></i> Restore Database</h3>
+      <p class="hint" style="margin: 8px 0 16px;">
+        <i class="fa-solid fa-triangle-exclamation" style="color:#e53935"></i>
+        Restoring overwrites all existing tables (drops and recreates). Only upload trusted backups.
+      </p>
+      <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="sql_file" accept=".sql" required class="file-input" style="margin-bottom: 12px;">
+        <br>
+        <button type="submit" name="restore" class="btn danger">
+          <i class="fa-solid fa-database"></i> Restore Database
+        </button>
+      </form>
     </div>
 
   </div>
+
 </main>
 
 <!-- Scripts -->

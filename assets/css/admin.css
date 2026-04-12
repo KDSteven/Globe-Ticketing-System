@@ -249,6 +249,16 @@ input[type="file"]::-webkit-file-upload-button:hover{ background: var(--brand-70
     color: #7f1d1d;            /* dark red */
     border: 1px solid #fecaca;
 }
+
+/* Ticket status badge modifiers */
+.badge-pending        { background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; }
+.badge-revisions      { background:#fff3cd; color:#92520a; border:1px solid #fcd9a0; }
+.badge-revisions-late { background:#ffe8a1; color:#7a4200; border:1px solid #f4a000; }
+.badge-completed      { background:#dcfce7; color:#166534; border:1px solid #86efac; }
+.badge-completed-late { background:#dbeafe; color:#1e40af; border:1px solid #93c5fd; }
+.badge-overdue        { background:#fee2e2; color:#7f1d1d; border:1px solid #fecaca; }
+.badge-closed         { background:#f4f4f4; color:#444;    border:1px solid #d1d5db; }
+
 .icon-btn {
   border: 1px solid transparent;
   background: transparent;
@@ -557,14 +567,31 @@ input[type="file"]::-webkit-file-upload-button:hover{ background: var(--brand-70
 }
 
 /* Legend */
-.legend{ display:flex; align-items:center; gap:18px; margin:6px 0 10px 2px; color:#1f1f1f; font-weight:600; }
-.dot{ width:16px; height:16px; border-radius:4px; display:inline-block; margin-right:6px; }
+.legend{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin:6px 0 10px 2px; color:#1f1f1f; font-weight:600; }
+.dot{ width:16px; height:16px; border-radius:4px; display:inline-block; margin-right:4px; flex-shrink:0; }
 .dot-green{ background: var(--green); } .dot-red{ background: var(--red); }
 .dot-gray{  background: var(--gray); }  .dot-amber{ background: var(--amber); }
-.dot-blue {
-    background: #1fb6ff; /* matches your KPI blue or pick another */
-}
+.dot-blue { background: #1fb6ff; }
 .dot-black { background: #444; }
+
+/* Clickable legend filters */
+.legend-link {
+  display: inline-flex; align-items: center; gap: 2px;
+  text-decoration: none; color: inherit;
+  border-radius: 6px; padding: 3px 8px;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+.legend-link:hover { background: rgba(46,49,146,.07); }
+.legend-link.active-filter { background: rgba(46,49,146,.12); font-weight: 700; border-radius: 6px; }
+
+/* Search icon inside input */
+.search-input-wrap { position: relative; display: inline-flex; align-items: center; }
+.search-icon { position: absolute; left: 10px; color: #9ca3af; font-size: 13px; pointer-events: none; }
+.search-input-wrap input { padding-left: 30px; }
+
+/* Empty state icon */
+.empty-state i { font-size: 28px; display: block; margin-bottom: 8px; color: #d1d5db; }
 .row-closed {
   background: #f4f4f4;
 }
@@ -1370,3 +1397,23 @@ table.tickets{ width:100%; border-collapse:separate; border-spacing:0; }
   .rw-kpis{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+/* ===== PAGE TITLE ===== */
+.page-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 20px;
+  padding: 20px 24px 0;
+}
+
+/* ===== ROUTING RULE STATUS BADGES ===== */
+.badge-active   { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+.badge-disabled { background: #f4f4f4; color: #6b7280; border: 1px solid #d1d5db; }
+
+/* ===== DATA BACKUP ACTION CARDS GRID ===== */
+.backup-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 8px;
+}

@@ -57,7 +57,7 @@ include __DIR__ . '/assets/partials/brandbar.php';
 
 <h1 class="page-title">Manage Lawyers</h1>
 
-<div class="actions-bar" style="margin-bottom: 20px; display:flex; gap:10px;">
+<div class="actions-bar">
     <button class="btn primary" id="openAddLawyerModal">+ Add New Lawyer</button>
 
     <?php if ($view === 'active'): ?>
@@ -68,7 +68,7 @@ include __DIR__ . '/assets/partials/brandbar.php';
 </div>
 
 <!-- ACTIVE LAWYERS TABLE -->
-<div class="card" style="padding:20px; <?= $view === 'archived' ? 'display:none;' : '' ?>">
+<div class="card card-padded" <?= $view === 'archived' ? 'style="display:none;"' : '' ?>>
     <table class="data-table">
         <thead>
             <tr>
@@ -113,12 +113,19 @@ include __DIR__ . '/assets/partials/brandbar.php';
                 </td>
             </tr>
         <?php endwhile; ?>
+        <?php if ($activeResult->num_rows === 0): ?>
+          <tr>
+            <td colspan="5" class="empty-state">
+              <i class="fa-solid fa-users"></i> No active lawyers found.
+            </td>
+          </tr>
+        <?php endif; ?>
         </tbody>
     </table>
 </div>
 
 <!-- ARCHIVED LAWYERS TABLE -->
-<div class="card" style="padding:20px; <?= $view === 'active' ? 'display:none;' : '' ?>">
+<div class="card card-padded" <?= $view === 'active' ? 'style="display:none;"' : '' ?>>
     <table class="data-table">
         <thead>
             <tr>
@@ -164,6 +171,13 @@ include __DIR__ . '/assets/partials/brandbar.php';
                 </td>
             </tr>
         <?php endwhile; ?>
+        <?php if ($archivedResult->num_rows === 0): ?>
+          <tr>
+            <td colspan="5" class="empty-state">
+              <i class="fa-solid fa-box-archive"></i> No archived lawyers found.
+            </td>
+          </tr>
+        <?php endif; ?>
         </tbody>
     </table>
 </div>
@@ -173,21 +187,25 @@ include __DIR__ . '/assets/partials/brandbar.php';
     <div class="modal-box">
         <h2>Add New Lawyer</h2>
         <form method="POST" action="api/lawyer_add.php">
-            <label>Name:</label>
-            <input type="text" name="name" required>
-
-            <label>Email (must be @globe.com.ph):</label>
-            <input type="email" name="email" required>
-
-            <label>Temporary Password:</label>
-            <input type="password" name="password" required>
-
-            <label>Role:</label>
-            <select name="role">
-                <option value="lawyer">Lawyer</option>
-                <option value="admin">Admin</option>
-            </select>
-
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>Email (must be @globe.com.ph):</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label>Temporary Password:</label>
+                <input type="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label>Role:</label>
+                <select name="role">
+                    <option value="lawyer">Lawyer</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
             <div class="modal-actions">
                 <button type="submit" class="btn primary">Create Lawyer</button>
                 <button type="button" id="closeAddLawyerModal" class="btn secondary">Cancel</button>
@@ -202,19 +220,21 @@ include __DIR__ . '/assets/partials/brandbar.php';
         <h2>Edit Lawyer</h2>
         <form method="POST" action="api/lawyer_update.php">
             <input type="hidden" name="id" id="editLawyerId">
-
-            <label>Name:</label>
-            <input type="text" name="name" id="editLawyerName" required>
-
-            <label>Email (cannot be edited):</label>
-            <input type="email" id="editLawyerEmail" disabled>
-
-            <label>Role:</label>
-            <select name="role" id="editLawyerRole">
-                <option value="lawyer">Lawyer</option>
-                <option value="admin">Admin</option>
-            </select>
-
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" name="name" id="editLawyerName" required>
+            </div>
+            <div class="form-group">
+                <label>Email (cannot be edited):</label>
+                <input type="email" id="editLawyerEmail" disabled>
+            </div>
+            <div class="form-group">
+                <label>Role:</label>
+                <select name="role" id="editLawyerRole">
+                    <option value="lawyer">Lawyer</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
             <div class="modal-actions">
                 <button type="submit" class="btn primary">Save Changes</button>
                 <button type="button" id="closeEditLawyerModal" class="btn secondary">Cancel</button>

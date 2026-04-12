@@ -20,7 +20,8 @@ $role = $_SESSION['lawyer_role'];
 <link rel="stylesheet" href="assets/css/manage_account.css">
 <link rel="stylesheet" href="assets/css/toast.css">
 <link rel="stylesheet" href="assets/css/notifications.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+<link rel="icon" type="image/x-icon" href="/assets/img/favicon/favicon.ico">
 </head>
 
 <body>
@@ -49,9 +50,16 @@ include __DIR__ . '/assets/partials/brandbar.php';
   <!-- ===================== PROFILE ===================== -->
   <section class="card account-section">
     <h2><i class="fa-solid fa-user"></i> Profile</h2>
-    <p><strong>Name:</strong> <?= htmlspecialchars($name) ?></p>
-    <p><strong>Email:</strong> <?= htmlspecialchars($email) ?></p>
-    <p><strong>Role:</strong> <?= htmlspecialchars($role) ?></p>
+    <div class="profile-row">
+      <div class="profile-avatar"><?= strtoupper(mb_substr($name, 0, 1)) ?></div>
+      <div class="profile-details">
+        <div class="profile-name"><?= htmlspecialchars($name) ?></div>
+        <div class="profile-email"><?= htmlspecialchars($email) ?></div>
+        <span class="status-badge <?= $role === 'admin' ? 'badge-overdue' : 'badge-pending' ?>">
+          <?= ucfirst(htmlspecialchars($role)) ?>
+        </span>
+      </div>
+    </div>
   </section>
 
   <!-- ===================== CHANGE PASSWORD ===================== -->
@@ -82,8 +90,8 @@ include __DIR__ . '/assets/partials/brandbar.php';
             <div class="input-wrap">
                 <input type="password" id="confirm_pw" required>
                 <i class="fa-solid fa-check icon"></i>
-                <small id="pwMatchMsg" class="pw-hint"></small>
             </div>
+            <small id="pwMatchMsg" class="pw-hint"></small>
         </div>
 
         <button type="submit" class="btn primary update-btn">

@@ -114,3 +114,41 @@
 .pw-hint.error {
     color: #c70000; /* red */
 }
+
+/* Profile section */
+.profile-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.profile-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--brand, #2E3192);
+    color: #fff;
+    font-size: 22px;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.profile-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #0d0d26;
+}
+
+.profile-email {
+    font-size: 13px;
+    color: #666;
+    margin: 2px 0 8px;
+}

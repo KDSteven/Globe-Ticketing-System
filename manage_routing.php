@@ -77,9 +77,6 @@ include __DIR__ . '/assets/partials/brandbar.php';
 </aside>
 <div id="sbBackdrop" aria-hidden="true"></div>
 
-
-<div id="sbBackdrop" aria-hidden="true"></div>
-
 <main class="container-fluid page" id="mainContent">
 
 <h1 class="page-title">Routing Rules</h1>
@@ -89,14 +86,9 @@ include __DIR__ . '/assets/partials/brandbar.php';
 </div>
 
 <div class="card" style="padding:20px;">
-    <div class="search-bar" style="margin-bottom:15px; max-width:300px;">
-        <input 
-            type="text" 
-            id="routingSearch" 
-            class="big-input" 
-            placeholder="Search ticket type..."
-            style="padding:8px 12px;"
-        >
+    <div class="search-input-wrap" style="max-width:300px; margin-bottom:15px;">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="routingSearch" placeholder="Search ticket type…">
     </div>
     <div class="table-scroll">
         <table class="data-table">
@@ -116,9 +108,9 @@ include __DIR__ . '/assets/partials/brandbar.php';
                 <td><?= h($row['lawyer_name']) ?></td>
                 <td>
                     <?php if ($row['active']): ?>
-                        <span class="status-badge status-active">Active</span>
+                        <span class="status-badge badge-active">Active</span>
                     <?php else: ?>
-                        <span class="status-badge status-disabled">Disabled</span>
+                        <span class="status-badge badge-disabled">Disabled</span>
                     <?php endif; ?>
                 </td>
 
@@ -163,48 +155,51 @@ include __DIR__ . '/assets/partials/brandbar.php';
 
         <form method="POST" action="api/routing_add.php">
 
-            <label>Ticket Type:</label>
-            <select name="ticket_type" required>
-                <option value="" disabled selected>Select type…</option>
+            <div class="form-group">
+                <label>Ticket Type:</label>
+                <select name="ticket_type" required>
+                    <option value="" disabled selected>Select type…</option>
+                    <?php foreach ($routingConfig as $group => $items): ?>
+                        <?php if ($group === "_LAWYERS") continue; ?>
+                        <optgroup label="<?= h($group) ?>">
+                            <?php foreach ($items as $ticketType => $lawyerKey): ?>
+                                <option value="<?= h($ticketType) ?>"><?= h($ticketType) ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-                <?php foreach ($routingConfig as $group => $items): ?>
-                    <?php if ($group === "_LAWYERS") continue; ?>
+            <div class="form-group">
+                <label>Assign to Lawyer:</label>
+                <select name="assigned_lawyer" required>
+                    <option value="" disabled selected>Assign a Lawyer…</option>
+                    <?php foreach ($lawyers as $l): ?>
+                        <option value="<?= $l['id'] ?>"><?= h($l['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-                    <optgroup label="<?= h($group) ?>">
-                        <?php foreach ($items as $ticketType => $lawyerKey): ?>
-                            <option value="<?= h($ticketType) ?>"><?= h($ticketType) ?></option>
-                        <?php endforeach; ?>
-                    </optgroup>
+            <div class="form-group">
+                <label>CC Lawyers:</label>
+                <select name="cc_emails[]" id="addRuleCC">
+                    <option value="" disabled selected>Select a Lawyer…</option>
+                    <?php foreach ($lawyers as $l): ?>
+                        <option value="<?= h($l['email']) ?>"><?= h($l['email']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-                <?php endforeach; ?>
-            </select>
-
-            <label>Assign to Lawyer:</label>
-            <select name="assigned_lawyer" required>
-                <option value="" disabled selected>Assign a Lawyer… </option>
-                <?php foreach ($lawyers as $l): ?>
-                    <option value="<?= $l['id'] ?>"><?= h($l['name']) ?></option>
-                <?php endforeach; ?>
-            </select>
-
-            <label>CC Lawyers:</label>
-            <select name="cc_emails[]" id="addRuleCC">
-                <option value="" disabled selected>Select a Lawyer... </option>
-                <?php foreach ($lawyers as $l): ?>
-                    <option value="<?= h($l['email']) ?>">
-                        <?= h($l['email']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-
-            <label>Status:</label>
-            <select name="active">
-                <option value="1">Active</option>
-                <option value="0">Disabled</option>
-            </select>
+            <div class="form-group">
+                <label>Status:</label>
+                <select name="active">
+                    <option value="1">Active</option>
+                    <option value="0">Disabled</option>
+                </select>
+            </div>
 
             <div class="modal-actions">
-                <button class="btn primary">Save Rule</button>
+                <button type="submit" class="btn primary">Save Rule</button>
                 <button type="button" id="closeAddRuleModal" class="btn secondary">Cancel</button>
             </div>
 
@@ -221,50 +216,53 @@ include __DIR__ . '/assets/partials/brandbar.php';
 
             <input type="hidden" name="id" id="editRuleId">
 
-            <label>Ticket Type:</label>
-            <select name="ticket_type" id="editRuleType" required>
+            <div class="form-group">
+                <label>Ticket Type:</label>
+                <select name="ticket_type" id="editRuleType" required>
+                    <?php foreach ($routingConfig as $group => $items): ?>
+                        <?php if ($group === "_LAWYERS") continue; ?>
+                        <optgroup label="<?= h($group) ?>">
+                            <?php foreach ($items as $ticketType => $lawyerKey): ?>
+                                <option value="<?= h($ticketType) ?>"><?= h($ticketType) ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-                <?php foreach ($routingConfig as $group => $items): ?>
-                    <?php if ($group === "_LAWYERS") continue; ?>
+            <div class="form-group">
+                <label>Display Name (Admin label):</label>
+                <input type="text" name="display_name" id="editRuleDisplay" placeholder="e.g. NDA (Standard)">
+            </div>
 
-                    <optgroup label="<?= h($group) ?>">
+            <div class="form-group">
+                <label>Assign to Lawyer:</label>
+                <select name="assigned_lawyer" id="editRuleLawyer" required>
+                    <?php foreach ($lawyers as $l): ?>
+                        <option value="<?= $l['id'] ?>"><?= h($l['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-                        <?php foreach ($items as $ticketType => $lawyerKey): ?>
-                            <option value="<?= h($ticketType) ?>"><?= h($ticketType) ?></option>
-                        <?php endforeach; ?>
+            <div class="form-group">
+                <label>CC Lawyers:</label>
+                <select name="cc_emails[]" id="editRuleCC">
+                    <?php foreach ($lawyers as $l): ?>
+                        <option value="<?= h($l['email']) ?>"><?= h($l['email']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-                    </optgroup>
+            <div class="form-group">
+                <label>Status:</label>
+                <select name="active" id="editRuleActive">
+                    <option value="1">Active</option>
+                    <option value="0">Disabled</option>
+                </select>
+            </div>
 
-                <?php endforeach; ?>
-            </select>
-
-            <label>Display Name (Admin label):</label>
-            <input type="text" name="display_name" id="editRuleDisplay" placeholder="e.g. NDA (Standard)">
-
-
-            <label>Assign to Lawyer:</label>
-            <select name="assigned_lawyer" id="editRuleLawyer" required>
-                <?php foreach ($lawyers as $l): ?>
-                    <option value="<?= $l['id'] ?>"><?= h($l['name']) ?></option>
-                <?php endforeach; ?>
-            </select>
-
-            <label>CC Lawyers:</label>
-            <select name="cc_emails[]" id="editRuleCC">
-                <?php foreach ($lawyers as $l): ?>
-                    <option value="<?= h($l['email']) ?>">
-                        <?= h($l['email']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-
-            <label>Status:</label>
-            <select name="active" id="editRuleActive">
-                <option value="1">Active</option>
-                <option value="0">Disabled</option>
-            </select>
-
-                <button class="btn primary">Save</button>
+            <div class="modal-actions">
+                <button type="submit" class="btn primary">Save</button>
                 <button type="button" id="closeEditRuleModal" class="btn secondary">Cancel</button>
             </div>
         </form>

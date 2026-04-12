@@ -368,34 +368,12 @@ $hasVolumeData   = !empty($volumeLabels) && array_sum($volumeCounts) > 0;
 
             <button type="submit" class="btn primary">Apply</button>
         </form>
-        <?php if ($_SESSION['lawyer_role'] === 'admin'): ?>
-            <button type="button" class="btn secondary" id="addHolidayBtn">
-                + Add Holiday
-            </button>
-        <?php endif; ?>
     </div>
 
     <!-- SIDEBAR -->
     <aside id="offcanvas" aria-hidden="true">
-        <div class="sb-head">
-            <span>Navigation</span>
-            <button id="sbClose" aria-label="Close">✕</button>
-        </div>
-
-        <nav class="sb-nav">
-            <a href="admin_dashboard.php">Dashboard</a>
-            <a href="tickets.php">All Tickets</a>
-            <a href="tickets.php?status=Pending">Pending</a>
-            <a href="tickets.php?status=For%20Revisions">For Revisions</a>
-            <a href="tickets.php?status=Completed">Completed</a>
-            <a href="tickets.php?status=Overdue">Overdue</a>
-            <hr>
-            <a href="manage_account.php">My Account</a>
-            <hr>
-            <a href="/api/logout.php">Logout</a>
-        </nav>
+        <?php include __DIR__ . '/assets/partials/sidebar_common.php'; ?>
     </aside>
-
     <div id="sbBackdrop" aria-hidden="true"></div>
 
     <!-- MAIN CONTENT -->
@@ -405,6 +383,7 @@ $hasVolumeData   = !empty($volumeLabels) && array_sum($volumeCounts) > 0;
         <section class="kpi-grid">
 
             <div class="kpi-card kpi-green">
+                <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
                 <div class="kpi-header">
                     <span class="kpi-label">Total Completed</span>
                     <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
@@ -412,6 +391,7 @@ $hasVolumeData   = !empty($volumeLabels) && array_sum($volumeCounts) > 0;
                 <div class="kpi-value"><?= $completed ?></div>
             </div>
             <div class="kpi-card kpi-purple">
+                <div class="kpi-icon"><i class="fa-solid fa-hourglass-half"></i></div>
                 <div class="kpi-header">
                     <span class="kpi-label">Completed (On Time)</span>
                     <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
@@ -420,6 +400,7 @@ $hasVolumeData   = !empty($volumeLabels) && array_sum($volumeCounts) > 0;
             </div>
 
             <div class="kpi-card kpi-gray">
+                <div class="kpi-icon"><i class="fa-solid fa-calendar-xmark"></i></div>
                 <div class="kpi-header">
                     <span class="kpi-label">Past SLA</span>
                     <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
@@ -428,6 +409,7 @@ $hasVolumeData   = !empty($volumeLabels) && array_sum($volumeCounts) > 0;
             </div>
 
             <div class="kpi-card kpi-amber">
+                <div class="kpi-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
                 <div class="kpi-header">
                     <span class="kpi-label">Overdue</span>
                     <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
@@ -436,6 +418,7 @@ $hasVolumeData   = !empty($volumeLabels) && array_sum($volumeCounts) > 0;
             </div>
 
             <div class="kpi-card kpi-red">
+                <div class="kpi-icon"><i class="fa-solid fa-rotate-left"></i></div>
                 <div class="kpi-header">
                     <span class="kpi-label">For Revisions</span>
                     <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>
@@ -444,6 +427,7 @@ $hasVolumeData   = !empty($volumeLabels) && array_sum($volumeCounts) > 0;
             </div>
 
             <div class="kpi-card kpi-blue">
+                <div class="kpi-icon"><i class="fa-solid fa-clock"></i></div>
                 <div class="kpi-header">
                     <span class="kpi-label">Pending</span>
                     <span class="kpi-meta">as of <?= h(date('M j, Y')) ?></span>

@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($stmt->execute()) {
-        header('Location: ../tickets.php?msg=updated');
+        header('Location: ../tickets.php?ok=' . urlencode('Status updated successfully.'));
         exit;
     } else {
         die('DB error: ' . $stmt->error);
